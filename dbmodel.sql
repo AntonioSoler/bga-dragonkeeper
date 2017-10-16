@@ -33,5 +33,5 @@ CREATE TABLE IF NOT EXISTS `cards` (
 
 -- Example 2: add a custom field to the standard "player" table
 
-ALTER TABLE `player` ADD `player_gold` INT NOT NULL DEFAULT '0';
+ALTER TABLE `player` ADD `player_gold` INT NOT NULL DEFAULT '4';
 ALTER TABLE `player` ADD `player_guild` INT NOT NULL DEFAULT '0';

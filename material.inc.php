@@ -96,4 +96,3 @@ $this->card_types = array(
 	41 => array( 'type_id' =>  41 ,'amount' => 1 ,  'color' => 4,  'value' => 4,  'power' => 5  ),
 	42 => array( 'type_id' =>  42 ,'amount' => 1 ,  'color' => 4,  'value' => 5,  'power' => 0  )
 );                                                                                                                                        
-

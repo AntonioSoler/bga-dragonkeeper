@@ -25,14 +25,11 @@
     Please REMOVE this comment before publishing your game on BGA
 -->
 
-
 <div id="playareascaler">
 	<div id="playArea">
 	</div>
 
-
-<!-- BEGIN playerboard -->
-                
+<!-- BEGIN playerboard -->                
 				<div id="playerboard_{PLAYER_ID}" class="playerboard">
 				<h2 class="Header" style="color:#{PLAYER_COLOR};"  >{PLAYER_NAME}</h2>
 				</div>

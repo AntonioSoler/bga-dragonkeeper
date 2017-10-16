@@ -64,14 +64,59 @@ $machinestates = array(
     // Note: ID=2 => your first state
 
     2 => array(
-    		"name" => "playerTurn",
-    		"description" => clienttranslate('${actplayer} must play a card or pass'),
-    		"descriptionmyturn" => clienttranslate('${you} must play a card or pass'),
+    		"name" => "playerPick",
+    		"description" => clienttranslate('${actplayer} must pick a card to take'),
+    		"descriptionmyturn" => clienttranslate('${you} must pick a card to take'),
     		"type" => "activeplayer",
-    		"possibleactions" => array( "playCard", "pass" ),
-    		"transitions" => array( "playCard" => 2, "pass" => 2 )
+    		"possibleactions" => array( "pickCard" ),
+    		"transitions" => array( "pickCard" => 3)
+    ),
+
+    3 => array(
+        "name" => "playerDonate",
+        "description" => clienttranslate('${actplayer} must pick a card to donate'),
+        "descriptionmyturn" => clienttranslate('${you} must pick a card to donate'),
+        "type" => "activeplayer",
+        "possibleactions" => array( "pickCard" ),
+        "transitions" => array( "pickCard" => 4)
     ),
     
+    4 => array(
+        "name" => "activatePower",
+        "description" => clienttranslate('${actplayer} may activate now the special power of the card'),
+        "descriptionmyturn" => clienttranslate('${you} may activate now the special power of the card'),
+        "type" => "activeplayer",
+        "possibleactions" => array( "playPower" , "pass" ),
+        "transitions" => array( "playPower" => 5 , "pass"=> 6 )
+    ),
+
+    5 => array(
+        "name" => "activatePower",
+        "description" => clienttranslate('${actplayer} have to select a target card to use the power'),
+        "descriptionmyturn" => clienttranslate('${you} have to select a target card to use the power'),
+        "type" => "activeplayer",
+        "possibleactions" => array( "pickCard" ),
+        "transitions" => array( "pickCard" => 6 )
+    ),
+
+    6 => array(
+        "name" => "nextPlayer",
+        "description" => '',
+        "type" => "game",
+        "action" => "stNextPlayer",
+        "updateGameProgression" => true,   
+        "transitions" => array( "endGameScoring" => 90, "nextPlayer" => 10 )
+    ),
+
+    2 => array(
+        "name" => "endGameScoring",
+        "description" => '',
+        "type" => "game",
+        "action" => "stendGameScoring",
+        "updateGameProgression" => true,   
+        "transitions" => array( "endGame" => 99 )
+    ),
+
 /*
     Examples:
     
