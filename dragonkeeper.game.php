@@ -271,6 +271,29 @@ class dragonkeeper extends Table
     
     */
 
+    function pickCard( $card_id)
+    {
+		self::checkAction( 'pickCard' );
+		$player_id = self::getActivePlayerId();
+		$thiscard= $this->cards->getCard( $card_id );
+        $thiscardtype=$thiscard['type'];
+        
+			self::DbQuery( "UPDATE cards SET card_location_arg=".$player_id.", card_location='hand' WHERE card_id=".$card_id );
+			
+								
+			self::notifyAllPlayers( "cardtohand", clienttranslate( '${player_name} this is your last card so the effect is not applied' ), array(
+						'player_id' => $player_id,
+						'player_name' => self::getActivePlayerName(),
+						'card_id' => $card_id
+						) );
+			$this->gamestate->nextState( 'endTurn' );
+		}
+		
+		else 
+		{
+			$this->gamestate->nextState( 'selectTarget' );	
+		}
+    }
     
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state arguments
@@ -299,6 +322,44 @@ class dragonkeeper extends Table
     }    
     */
 
+    function argPossiblePicks()
+    {   
+		$player_id = self::getActivePlayerId();
+        $level=self::getGameStateValue( 'level');
+		$drake_pos=self::getGameStateValue( 'drakepos');
+		$Ydrakepos= $drake_pos % 10 ;
+		$Xdrakepos=  ($drake_pos - $drake_pos % 10) / 10; 
+        $result=  array( 'possibledestinations' => array() );
+        for ($x=0 ; $x<= 4 ; $x++)
+			{
+					if ( $Xdrakepos != $x )
+					{ 
+						array_push($result["possibledestinations"],"table".$level."field".($Ydrakepos*10+$x));
+					}
+					
+			}
+        return $result ;	
+    }
+
+    function argPossibleDonations()
+    {   
+		$player_id = self::getActivePlayerId();
+        $level=self::getGameStateValue( 'level');
+		$drake_pos=self::getGameStateValue( 'drakepos');
+		$Ydrakepos= $drake_pos % 10 ;
+		$Xdrakepos=  ($drake_pos - $drake_pos % 10) / 10; 
+        $result=  array( 'possibledestinations' => array() );
+        for ($y=0 ; $y<= 4 ; $y++)
+			{
+					if ( $Ydrakepos != $y )
+					{ 
+						array_push($result["possibledestinations"],"table".$level."field".($y*10+$Xdrakepos));
+					}
+					
+			}
+        return $result ;	
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state actions
 ////////////
@@ -311,15 +372,17 @@ class dragonkeeper extends Table
     /*
     
     Example for game state "MyGameState":
+    */
 
-    function stMyGameState()
+
+    function stendGameScoring()
     {
         // Do some stuff ...
         
         // (very often) go to another gamestate
         $this->gamestate->nextState( 'some_gamestate_transition' );
     }    
-    */
+
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Zombie
