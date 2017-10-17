@@ -233,7 +233,10 @@ class dragonkeeper extends Table
         In this space, you can put any utility methods useful for your game logic
     */
 
-
+    function getCardcolor ($cardType)
+    {
+        return ($this->card_types[$cardType]['color'])
+    }
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
@@ -276,7 +279,10 @@ class dragonkeeper extends Table
 		$player_id = self::getActivePlayerId();
 		$thiscard= $this->cards->getCard( $card_id );
         $thiscardtype=$thiscard['type'];
-        
+        $thiscardcolor= $this->getCardcolor( $thiscardtype );
+
+
+
         $this->cards->insertCardOnExtremePosition( $card_id , $player_id , true );
                                     
         self::notifyAllPlayers( "cardtohand", clienttranslate( '${player_name} this is your last card so the effect is not applied' ), array(
