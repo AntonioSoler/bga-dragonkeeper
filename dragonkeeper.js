@@ -110,8 +110,7 @@ function (dojo, declare) {
            */
            
             case 'playerPick':
-          
-              
+        
               if (this.isCurrentPlayerActive() )
               {
                   list = args.args.possibledestinations;
