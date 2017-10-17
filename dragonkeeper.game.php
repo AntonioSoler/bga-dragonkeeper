@@ -103,8 +103,7 @@ class dragonkeeper extends Table
         {
 			if ($cardType['type_id']  == 1)
             {
-                
-				$card = array( 'type' => $cardType["type_id"], 'type_arg' => $cardType["value"]  , 'nbr' => $cardType["amount"]);
+				$card = array( 'type' => $cardType["type_id"], 'type_arg' => $cardType["color"]  , 'nbr' => $cardType["amount"]);
 				array_push($stairs, $card);
             }
 			else
@@ -278,17 +277,15 @@ class dragonkeeper extends Table
 		$thiscard= $this->cards->getCard( $card_id );
         $thiscardtype=$thiscard['type'];
         
-			self::DbQuery( "UPDATE cards SET card_location_arg=".$player_id.", card_location='hand' WHERE card_id=".$card_id );
-			
-								
-			self::notifyAllPlayers( "cardtohand", clienttranslate( '${player_name} this is your last card so the effect is not applied' ), array(
-						'player_id' => $player_id,
-						'player_name' => self::getActivePlayerName(),
-						'card_id' => $card_id
-						) );
-			$this->gamestate->nextState( 'endTurn' );
-		}
-		
+        $this->cards->insertCardOnExtremePosition( $card_id , $player_id , true );
+                                    
+        self::notifyAllPlayers( "cardtohand", clienttranslate( '${player_name} this is your last card so the effect is not applied' ), array(
+                    'player_id' => $player_id,
+                    'player_name' => self::getActivePlayerName(),
+                    'card_id' => $card_id
+                    ) );
+        $this->gamestate->nextState( 'endTurn' );
+            
 		else 
 		{
 			$this->gamestate->nextState( 'selectTarget' );	

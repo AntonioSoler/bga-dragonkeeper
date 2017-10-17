@@ -30,7 +30,6 @@ CREATE TABLE IF NOT EXISTS `cards` (
   PRIMARY KEY (`card_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-
 -- Example 2: add a custom field to the standard "player" table
 
 ALTER TABLE `player` ADD `player_gold` INT NOT NULL DEFAULT '4';

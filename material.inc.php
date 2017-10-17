@@ -32,7 +32,6 @@ $this->card_types = array(
 
 */
 
-
 $this->cardpowers = array(
     1   => clienttranslate("Stairs"       ),
     2   => clienttranslate("Secret Path" ),
@@ -49,7 +48,6 @@ $this->cardcolors = array(
 	2   => clienttranslate("yellow" ),
     3   => clienttranslate("green"  ),
     4   => clienttranslate("purple" )
-	
 );
 
 $this->card_types = array(
