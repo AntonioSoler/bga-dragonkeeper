@@ -31,8 +31,13 @@
 
 <!-- BEGIN playerboard -->                
 				<div id="playerboard_{PLAYER_ID}" class="playerboard">
-				<h2 class="Header" style="color:#{PLAYER_COLOR};"  >{PLAYER_NAME}</h2>
-				</div>
+				<h2 class="boardHeader" style="color:#{PLAYER_COLOR};"  >{PLAYER_NAME}</h2>
+                    <div id="store_{PLAYER_ID}_0" class="store0"></div>
+                    <div id="store_{PLAYER_ID}_1" class="store1"></div>
+                    <div id="store_{PLAYER_ID}_2" class="store2"></div>
+                    <div id="store_{PLAYER_ID}_3" class="store3"></div>
+                    <div id="store_{PLAYER_ID}_4" class="store4"></div>
+                </div>
 <!-- END playerboard -->
 
 </div>

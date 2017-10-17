@@ -281,21 +281,16 @@ class dragonkeeper extends Table
         $thiscardtype=$thiscard['type'];
         $thiscardcolor= $this->getCardcolor( $thiscardtype );
 
-
-
-        $this->cards->insertCardOnExtremePosition( $card_id , $player_id , true );
+        $this->cards->insertCardOnExtremePosition( $card_id , $player_id."-".thiscardcolor , true );
                                     
-        self::notifyAllPlayers( "cardtohand", clienttranslate( '${player_name} this is your last card so the effect is not applied' ), array(
+        self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} takes a card' ), array(
                     'player_id' => $player_id,
                     'player_name' => self::getActivePlayerName(),
-                    'card_id' => $card_id
+                    'card_id' => $card_id,
+                    'destination' => "store_".$player_id."_".$thiscardcolor
                     ) );
-        $this->gamestate->nextState( 'endTurn' );
-            
-		else 
-		{
-			$this->gamestate->nextState( 'selectTarget' );	
-		}
+        $this->gamestate->nextState( );
+        
     }
     
 //////////////////////////////////////////////////////////////////////////////

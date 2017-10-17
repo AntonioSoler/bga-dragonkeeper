@@ -512,8 +512,8 @@ div#table3 {}
 }
 */
 .playerboard {
-    height: 300px;
-    width: 700px;
+    height: 290px;
+    width: 690px;
     pointer-events: visible;
     position: relative;
     display: inline-block;
@@ -521,6 +521,60 @@ div#table3 {}
     background-image: url('img/playerboard.jpg');
     border-radius: 10px;
     box-shadow: 6px 6px 2px 0px rgba(0, 0, 0, 0.65);
+}
+
+.boardHeader{
+    background-color:white;
+}
+
+.store0 {
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    display: inline-block;
+    top: 55px;
+    left: 40px;
+    box-shadow: 0 0 2px 2px rgb(243, 0, 0);
+}
+
+.store1 {
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    display: inline-block;
+    top: 55px;
+    left: 168px;
+    box-shadow: 0 0 2px 2px rgb(243, 0, 0);
+}
+
+.store2 {
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    display: inline-block;
+    top: 55px;
+    left: 301px;
+    box-shadow: 0 0 2px 2px rgb(243, 0, 0);
+}
+
+.store3 {
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    display: inline-block;
+    top: 55px;
+    left: 432px;
+    box-shadow: 0 0 2px 2px rgb(243, 0, 0);
+}
+
+.store4 {
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    display: inline-block;
+    top: 55px;
+    left: 562px;
+    box-shadow: 0 0 2px 2px rgb(243, 0, 0);
 }
 
 .coin {
