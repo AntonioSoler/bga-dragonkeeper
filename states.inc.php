@@ -70,7 +70,7 @@ $machinestates = array(
             "type" => "activeplayer",
             "args" => "argPossiblePicks",
     		"possibleactions" => array( "pickCard" ),
-    		"transitions" => array( "pickCard" => 3)
+    		"transitions" => array( "pickCard" => 3, "nextPlayer" =>6 )
     ),
 
     3 => array(
@@ -80,7 +80,7 @@ $machinestates = array(
         "type" => "activeplayer",
         "args" => "argPossibleDonations",
         "possibleactions" => array( "pickCard" ),
-        "transitions" => array( "pickCard" => 4)
+        "transitions" => array( "pickCard" => 4, "nextPlayer" =>6 )
     ),
     
     4 => array(
@@ -107,7 +107,7 @@ $machinestates = array(
         "type" => "game",
         "action" => "stNextPlayer",
         "updateGameProgression" => true,   
-        "transitions" => array( "endGameScoring" => 90, "nextPlayer" => 10 )
+        "transitions" => array( "endGameScoring" => 90, "nextPlayer" => 2 )
     ),
 
     90 => array(

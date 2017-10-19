@@ -68,7 +68,21 @@
 		$card_id = self::getArg( "card_id", AT_posint, true );
 		$this->game->pickcard($card_id);
 		self::ajaxResponse();    
-	}
+    }
+    
+    public function activate()
+    {
+		self::setAjaxMode();	
+		$this->game->activate();
+		self::ajaxResponse();    
+    }
+    
+    public function pass()
+    {
+		self::setAjaxMode();	
+		$this->game->pass();
+		self::ajaxResponse();    
+    }
 
   }
   

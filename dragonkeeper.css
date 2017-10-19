@@ -227,7 +227,6 @@
     /* display: none; */
 }
 
-div#table3 {}
 
 #table2 div .side1::after {
     content: "";
@@ -339,10 +338,6 @@ div#table3 {}
     margin-right: -13px;
     margin-bottom: -14px;
     /* box-shadow: 0px 0px 2px 2px rgb(254, 218, 5); */
-}
-
-.field .card{
-    /* transform: translateZ(8px); */
 }
 
 #game_play_area div

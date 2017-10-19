@@ -126,7 +126,7 @@ function (dojo, declare) {
                   {
                       var thiselement = list[i];
                       thistarget=dojo.query("#"+thiselement+">div" ).addClass( 'borderpulse' ) ;
-                      //this.gameconnections.push( dojo.connect(thistarget[0], 'onclick' , this, 'selectDestination'))
+                      this.gameconnections.push( dojo.connect(thistarget[0], 'onclick' , this, 'pickcard'))
                   }
 
                   debugger;
@@ -186,6 +186,11 @@ function (dojo, declare) {
                     this.addActionButton( 'button_3_id', _('Button 3 label'), 'onMyMethodToCall3' ); 
                     break;
 */
+                case 'activatePower':
+                this.addActionButton( 'yes_button', _('Activate Power'), 'activate' );
+                this.addActionButton( 'no_button', _('Pass'), 'pass' );
+                break;
+
                 }
             }
         },        
@@ -264,6 +269,69 @@ function (dojo, declare) {
         
         */
 
+        pickcard: function( evt )
+        {
+            // Stop this event propagation
+			
+            dojo.stopEvent( evt );
+			if( ! this.checkAction( 'pickCard' ) )
+            {   return; }
+			
+			dojo.query(".borderpulse").removeClass("borderpulse");
+
+            // Get the cliqued pos and Player field ID
+            var cardpicked = evt.currentTarget.id;
+			var card_id = cardpicked.split('_')[1];
+			
+		/*	this.confirmationDialog( _('Are you sure you want to make this?'), dojo.hitch( this, function() {
+            this.ajaxcall( '/mygame/mygame/makeThis.html', { lock:true }, this, function( result ) {} );
+			} ) ); */
+		
+			dojo.forEach(this.gameconnections, dojo.disconnect);
+			
+			this.gameconnections=new Array();
+		
+            if( this.checkAction( 'pickCard' ) )    // Check that this action is possible at this moment
+            {            
+                this.ajaxcall( "/dragonkeeper/dragonkeeper/pickcard.html", {
+                    card_id:card_id                    
+                }, this, function( result ) {} );
+            }            
+        },
+        
+        activate: function( evt )
+        {
+			dojo.stopEvent( evt );
+			if( ! this.checkAction( 'playPower' ) )
+            {  return; }
+			
+			if( this.checkAction( 'playPower' ) && (this.gamedatas.players[this.getActivePlayerId()]['gold']>=5 )  )    // Check that this action is possible at this moment
+            {            
+                this.ajaxcall( "/dragonkeeper/dragonkeeper/activate.html", {
+                }, this, function( result ) {} );
+            }
+			else
+			{
+				this.showMessage  ( _("This action is no longer possible"), "info")
+			}	
+        },
+
+        pass: function( evt )
+        {
+			dojo.stopEvent( evt );
+			if( ! this.checkAction( 'pass' ) )
+            {  return; }
+			
+			if( this.checkAction( 'pass' ) && (this.gamedatas.players[this.getActivePlayerId()]['gold']>=5 )  )    // Check that this action is possible at this moment
+            {            
+                this.ajaxcall( "/dragonkeeper/dragonkeeper/pass.html", {
+                }, this, function( result ) {} );
+            }
+			else
+			{
+				this.showMessage  ( _("This action is no longer possible"), "info")
+			}	
+        },
         
         ///////////////////////////////////////////////////
         //// Reaction to cometD notifications

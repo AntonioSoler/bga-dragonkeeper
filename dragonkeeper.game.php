@@ -286,7 +286,26 @@ class dragonkeeper extends Table
                     ) );
         $this->gamestate->nextState( );    
     }
+
+    function activate( $card_id)
+    {
+		self::checkAction( 'playPower' );
+		$player_id = self::getActivePlayerId();
+        
+        
+        $this->gamestate->nextState( "playPower" );    
+    }
     
+    function pass( $card_id)
+    {
+		self::checkAction( 'pass' );
+		$player_id = self::getActivePlayerId();
+        
+        
+        $this->gamestate->nextState( "pass" );    
+    }
+
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state arguments
 ////////////
@@ -365,14 +384,27 @@ class dragonkeeper extends Table
     
     Example for game state "MyGameState":
     */
+    
+    function stNextPlayer()
+    {
+        // Do some stuff ...
+        
+        // (very often) go to another gamestate
+        if ( self::getGameStateValue( 'level' ) > 1  )
+        {
+            $this->activeNextPlayer();
+            $this->gamestate->nextState( "nextPlayer" );
+        }
 
+        $this->gamestate->nextState( "endGame" );
+    }   
 
     function stendGameScoring()
     {
         // Do some stuff ...
         
         // (very often) go to another gamestate
-        $this->gamestate->nextState( 'some_gamestate_transition' );
+        $this->gamestate->nextState( "endGame" );
     }    
 
 
