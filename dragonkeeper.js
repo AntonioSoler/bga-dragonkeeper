@@ -74,9 +74,16 @@ function (dojo, declare) {
 			{
 					var card = this.gamedatas.table[i];
 					
-					this.placecard(card['location']+'field'+card['location_arg'] ,card['id'],card['type'],'playArea');
+					this.placecard(card['location']+'field'+card['location_arg'] ,card['id'],card['type'],'playArea', 1 );
 			}
-			
+            
+            for( var i in this.gamedatas.playercards )
+			{
+					var card = this.gamedatas.playercards[i];
+					
+					this.placecard(card['location'] ,card['id'],card['type'],'playArea',card['location_arg']);
+			}
+
             
 			dojo.place ( "<div id='drake'><div id='drakefoot'><div id='drakebody'></div><div id='drakewings'></div></div></div>", "table"+gamedatas.level+"field"+gamedatas.drakepos );
             // Setup game notifications to handle (see "setupNotifications" method below)
@@ -193,15 +200,17 @@ function (dojo, declare) {
         
         */
 		
-		placecard: function ( destination, card_id ,card_type , origin )
+		placecard: function ( destination, card_id ,card_type , origin , location_arg )
 		{
 			xpos= -100*((card_type - 1 )%7 );
 			ypos= -100*(Math.floor( (card_type -1 ) / 7 ));
 			position= xpos+"px "+ ypos+"px ";
 			
 			//dojo.style('stile_back_'+location_arg , "background-position", position);
-			
-			dojo.place( "<div id='card_"+card_id+"' class='card' style='background-position:"+position+";'></div>" , destination, "last");
+            innercard="<div id='card_"+card_id+"' class='card' style='background-position:"+position+"; ";
+            innercard+=" transform: translateZ("+5*location_arg+"px)";  
+            innercard+="'></div>";
+			dojo.place( innercard , destination, "last");
             
 		},
 		

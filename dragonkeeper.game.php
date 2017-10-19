@@ -189,14 +189,9 @@ class dragonkeeper extends Table
 		
         $result['table'] = self::getCollectionFromDb( $sql );
 		$players = self::loadPlayersBasicInfos();
-		foreach( $players as $player_id => $player )
-        {
-           $sql = "SELECT card_id id, card_location_arg location_arg, card_type_arg type_arg , card_location location from cards WHERE card_location like '".$player_id."' ORDER BY card_location_arg DESC";
-		
-           $result['playercards'][$player_id] = self::getCollectionFromDb( $sql );
-		 }
-		
-		
+        
+        $sql = "SELECT card_id id, card_location_arg location_arg, card_type type , card_type_arg type_arg , card_location location from cards WHERE card_location like 'store%' ORDER BY card_location_arg DESC";
+		$result['playercards'] = self::getCollectionFromDb( $sql );		
 		
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
   
@@ -235,7 +230,7 @@ class dragonkeeper extends Table
 
     function getCardcolor ($cardType)
     {
-        return ($this->card_types[$cardType]['color'])
+        return ($this->card_types[$cardType]['color']);
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -281,7 +276,7 @@ class dragonkeeper extends Table
         $thiscardtype=$thiscard['type'];
         $thiscardcolor= $this->getCardcolor( $thiscardtype );
 
-        $this->cards->insertCardOnExtremePosition( $card_id , $player_id."-".thiscardcolor , true );
+        $this->cards->insertCardOnExtremePosition( $card_id , "store_".$player_id."_".$thiscardcolor , true );
                                     
         self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} takes a card' ), array(
                     'player_id' => $player_id,
@@ -289,8 +284,7 @@ class dragonkeeper extends Table
                     'card_id' => $card_id,
                     'destination' => "store_".$player_id."_".$thiscardcolor
                     ) );
-        $this->gamestate->nextState( );
-        
+        $this->gamestate->nextState( );    
     }
     
 //////////////////////////////////////////////////////////////////////////////
