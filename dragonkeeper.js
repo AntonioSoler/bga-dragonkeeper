@@ -117,7 +117,6 @@ function (dojo, declare) {
            */
            
             case 'playerPick':
-        
               if (this.isCurrentPlayerActive() )
               {
                   list = args.args.possibledestinations;
@@ -128,10 +127,22 @@ function (dojo, declare) {
                       thistarget=dojo.query("#"+thiselement+">div" ).addClass( 'borderpulse' ) ;
                       this.gameconnections.push( dojo.connect(thistarget[0], 'onclick' , this, 'pickcard'))
                   }
-
-                  debugger;
               }
             break;
+            case 'playerDonate':
+            
+                  if (this.isCurrentPlayerActive() )
+                  {
+                      list = args.args.possibledestinations;
+                      this.gameconnections=new Array();
+                      for (var i = 0; i < list.length; i++)
+                      {
+                          var thiselement = list[i];
+                          thistarget=dojo.query("#"+thiselement+">div" ).addClass( 'borderpulse' ) ;
+                          this.gameconnections.push( dojo.connect(thistarget[0], 'onclick' , this, 'pickcard'))
+                      }
+                  }
+                break;
             case 'dummmy':
                 break;
             }

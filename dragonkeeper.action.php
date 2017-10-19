@@ -70,6 +70,14 @@
 		self::ajaxResponse();    
     }
     
+    public function donatecard()
+    {
+		self::setAjaxMode();
+		$card_id = self::getArg( "card_id", AT_posint, true );
+		$this->game->donateCard($card_id);
+		self::ajaxResponse();    
+    }
+
     public function activate()
     {
 		self::setAjaxMode();	

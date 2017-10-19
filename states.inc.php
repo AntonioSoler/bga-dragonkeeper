@@ -70,7 +70,7 @@ $machinestates = array(
             "type" => "activeplayer",
             "args" => "argPossiblePicks",
     		"possibleactions" => array( "pickCard" ),
-    		"transitions" => array( "pickCard" => 3, "nextPlayer" =>6 )
+    		"transitions" => array( "pickCard" => 3, "nextLevel" =>6 )
     ),
 
     3 => array(
@@ -79,8 +79,8 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must pick a card to donate'),
         "type" => "activeplayer",
         "args" => "argPossibleDonations",
-        "possibleactions" => array( "pickCard" ),
-        "transitions" => array( "pickCard" => 4, "nextPlayer" =>6 )
+        "possibleactions" => array( "donateCard" ),
+        "transitions" => array( "pickCard" => 4, "nextLevel" =>6 )
     ),
     
     4 => array(

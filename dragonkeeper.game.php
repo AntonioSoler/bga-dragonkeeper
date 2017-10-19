@@ -35,7 +35,8 @@ class dragonkeeper extends Table
         self::initGameStateLabels( array( 
                "path_used" => 10,
                "level" => 11,
-			   "drakepos" => 12
+               "drakepos" => 12,
+               "cardpicked" => 13
             //      ...
             //    "my_first_game_variant" => 100,
             //    "my_second_game_variant" => 101,
@@ -277,14 +278,49 @@ class dragonkeeper extends Table
         $thiscardcolor= $this->getCardcolor( $thiscardtype );
 
         $this->cards->insertCardOnExtremePosition( $card_id , "store_".$player_id."_".$thiscardcolor , true );
-                                    
+        self::setGameStateValue("cardpicked", $card_id );
         self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} takes a card' ), array(
                     'player_id' => $player_id,
                     'player_name' => self::getActivePlayerName(),
                     'card_id' => $card_id,
                     'destination' => "store_".$player_id."_".$thiscardcolor
                     ) );
-        $this->gamestate->nextState( );    
+        $this->gamestate->nextState( "pickCard" );    
+    }
+
+    function donateCard( $card_id)
+    {
+		self::checkAction( 'donateCard' );
+        $player_id = self::getActivePlayerId();
+        $nextplayer_id=self::getPlayerAfter( $player_id );
+		$thiscard= $this->cards->getCard( $card_id );
+        $thiscardtype=$thiscard['type'];
+        $thiscardcolor= $this->getCardcolor( $thiscardtype );
+        
+        $nextplayer_name=self::getUniqueValueFromDB( "SELECT player_name FROM player where player_id=".$nextplayer_id );
+        
+        $this->cards->insertCardOnExtremePosition( $card_id , "store_".$player_id."_".$thiscardcolor , true );
+                                    
+        self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} gives a card to ' ), array(
+                    'player_id' => $player_id,
+                    'player_name' => self::getActivePlayerName(),
+                    'nextplayer_name' => $nextplayer_name;
+                    'card_id' => $card_id,
+                    'destination' => "store_".$player_id."_".$thiscardcolor
+                    ) );
+
+        if ( $this->card_types[$thiscardtype]['value'] >2 )
+        {
+            self::DbQuery( "UPDATE player set player_gold = player_gold + 1 WHERE Player_id = $player_id" );	
+            
+            self::notifyAllPlayers( "playergetgold", clienttranslate( '${player_name} gets ${amount} <div class="goldlog"></div> from the Counter' ), array(
+                            'player_id' => $player_id,
+                            'player_name' => self::getActivePlayerName(),
+                            'amount' => 1 ,  
+                            'source' => "counter"
+                    ) );
+        }
+        $this->gamestate->nextState( "pickCard" );    
     }
 
     function activate( $card_id)
