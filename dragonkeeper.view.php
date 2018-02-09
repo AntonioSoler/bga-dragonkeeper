@@ -53,9 +53,11 @@
 		{
             if  ( $current_player_id  == $player['player_id'] )
 			{
+				$playercount=$playercount + 1;
 				$this->page->insert_block( "playerboard", array( "PLAYER_ID" => $player['player_id'],
 			                                            "PLAYER_NAME" => $player['player_name'],
-														"PLAYER_COLOR" => $player['player_color']
+														"PLAYER_COLOR" => $player['player_color'],
+														"PLAYER_COUNT" => $playercount
                                                       ));
 			}
 		}
@@ -63,9 +65,11 @@
 		{
             if  ( $current_player_id  != $player['player_id'] )
 			{
+				$playercount=$playercount + 1;
 				$this->page->insert_block( "playerboard", array( "PLAYER_ID" => $player['player_id'],
 			                                            "PLAYER_NAME" => $player['player_name'],
-														"PLAYER_COLOR" => $player['player_color']
+														"PLAYER_COLOR" => $player['player_color'],
+														"PLAYER_COUNT" => $playercount
                                                       ));
 			}
 		}

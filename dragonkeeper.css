@@ -22,16 +22,13 @@
     
     Usually, you are using CSS to:
     
-    1ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°) define the overall layout of your game
-        (ex: place the board on the top left, place player's hand beside, place the deck on the right, ...).
+    1    (ex: place the board on the top left, place player's hand beside, place the deck on the right, ...).
 
-    2ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°) create your CSS-sprites:
-        All images of your games should be gathered into a small number of image files. Then, using
+    2    All images of your games should be gathered into a small number of image files. Then, using
         background-image and background-position CSS properties, you create HTML blocks that can 
         display these images correctly (see example below).
     
-    3ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°) ... anything else:
-        It is really easy to add and remove CSS classes dynamically from your Javascript with
+    3   It is really easy to add and remove CSS classes dynamically from your Javascript with
         dojo.addClass and dojo.removeClass. It is also easy to check if an element has a class
         (dojo.hasClass) or to get all elements with a specific class (dojo.query). This is why,
         very often, using CSS classes for the logic of your user interface allow you to do complex
@@ -51,18 +48,24 @@
 }
 
 #playArea {
-    height: 650px;
-    width: 850px;
+    height: 1300px;
+    width: 100%;
     display: block;
     /* background-repeat: no-repeat; */
-    margin:auto;
-    pointer-events: visible;
-    position: relative;
     background-image: url('img/background.jpg');
     border-radius: 10px;
     box-shadow: 6px 6px 2px 0px rgba(0, 0, 0, 0.65);
 }
 
+
+#tables {
+        height: 650px;
+        width: 850px;
+        pointer-events: visible;
+        position: absolute;
+        left: 30%;
+        top: 20px;
+}
 
 #table1 {
     height: 640px;
@@ -76,7 +79,7 @@
     margin-bottom:auto;
     margin-left: auto; 
     margin-right: auto;
-    transform:translateZ(10px);
+    transform:translate3D(0px, 0px, 10px);
     background-repeat: no-repeat;
     pointer-events: visible;
     position: absolute;
@@ -183,7 +186,7 @@
     margin-bottom:auto;
     margin-left: auto;
     margin-right: auto;
-    transform:translateZ(100px);
+    transform:translate3D(0px, 0px, 100px);
     background-repeat: no-repeat;
     pointer-events: visible;
     position: absolute;
@@ -217,7 +220,7 @@
     margin-bottom:auto;
     margin-left: auto;
     margin-right: auto;
-    transform:translateZ(190px);
+    transform:translate3D(0px, 0px, 190px);
     background-repeat: no-repeat;
     pointer-events: visible;
     position: absolute;
@@ -311,33 +314,22 @@
 #tableinner3 .field{
     width:100px;
     height:100px;
-    display: inline-flex;
-    margin-left: 15px;
-    margin-top: 15px;
-    margin-right: 8px;
-    margin-bottom: 8px;
-    /* box-shadow: 0px 0px 2px 2px rgba(243, 17, 38, 0.65); */
+    position: absolute;
 }
 
 #tableinner2 .field{
     width:100px;
     height:100px;
-    display: inline-flex;
-    margin-left: 27px;
-    margin-top: 27px;
-    margin-right: -8px;
-    margin-bottom: -8px;
-    /* box-shadow: 0px 0px 2px 2px rgb(254, 218, 5); */
+    position: absolute;
 }
 #tableinner1 .field{
-    width:100px;
+	width:100px;
     height:100px;
-    display: inline-flex;
-    margin-left: 32px;
-    margin-top: 33px;
-    margin-right: -13px;
-    margin-bottom: -14px;
-    /* box-shadow: 0px 0px 2px 2px rgb(254, 218, 5); */
+    position: absolute;
+}
+
+.field div:nth-child(1) {
+ transform: translate3D(0px, 0px, 5px) ;
 }
 
 #game_play_area div
@@ -378,7 +370,7 @@
     background-image: url('img/dragonfoot.png');
     border-radius: 50%;
     box-shadow: 4px 4px 2px 0px rgba(0, 0, 0, 0.22);
-    transform: translatez(10px) rotateZ(30deg);
+    transform: translatez(10px) rotateZ(120deg);
     position:relative;
 }
 
@@ -510,12 +502,31 @@
     height: 290px;
     width: 690px;
     pointer-events: visible;
-    position: relative;
-    display: inline-block;
-    margin: 15px;
+    position: absolute;
     background-image: url('img/playerboard.jpg');
     border-radius: 10px;
     box-shadow: 6px 6px 2px 0px rgba(0, 0, 0, 0.65);
+}
+
+.player1 {
+    top: 700px;
+    left: 30px;
+}
+
+.player2 {
+    top: 700px;
+    right: 30px;
+}
+
+.player3 {
+    top: 1000px;
+    left: 30px;
+}
+
+
+.player4 {
+    top: 1000px;
+    right: 30px;
 }
 
 .boardHeader{
@@ -575,6 +586,45 @@
     box-shadow: 0 0 2px 2px rgb(243, 0, 0);
 }
 
+.cardstore div:nth-child(1) {
+ transform: translate3D(0px, 0px, 5px) ;
+}
+.cardstore div:nth-child(2) {
+ transform: translate3D(0px, 0px, 10px) ;
+}
+.cardstore div:nth-child(3) {
+ transform: translate3D(0px, 0px, 15px) ;
+}
+.cardstore div:nth-child(4) {
+ transform: translate3D(0px, 0px, 20px) ;
+}
+.cardstore div:nth-child(5) {
+ transform: translate3D(0px, 0px, 25px) ;
+}
+.cardstore div:nth-child(6) {
+ transform: translate3D(0px, 0px, 30px) ;
+}
+.cardstore div:nth-child(7) {
+ transform: translate3D(0px, 0px, 35px) ;
+}
+.cardstore div:nth-child(8) {
+ transform: translate3D(0px, 0px, 40px) ;
+}
+.cardstore div:nth-child(9) {
+ transform: translate3D(0px, 0px, 45px) ;
+}
+.cardstore div:nth-child(10) {
+ transform: translate3D(0px, 0px, 50px) ;
+}
+.cardstore div:nth-child(11) {
+ transform: translate3D(0px, 0px, 55px) ;
+}
+.cardstore div:nth-child(12) {
+ transform: translate3D(0px, 0px, 60px) ;
+}
+
+
+
 .coin {
     width: 15px;
     height: 15px;
@@ -597,6 +647,37 @@
     transform-style: preserve-3d
 }
 
+.traveller {
+    -webkit-animation: travelanim 1.5s ease 1;
+    -moz-animation: travelanim 1.5s ease 1;
+    -o-animation: travelanim 1.5s ease 1;
+    animation: travelanim 1.5s ease 1
+}
+
+@keyframes "travelanim" {
+    50% {
+        transform: translateZ(250px);
+    }
+}
+
+@-webkit-keyframes "travelanim" {
+    50% {
+        transform: translateZ(250px);
+    }
+}
+
+@-moz-keyframes "travelanim" {
+    50% {
+        transform: translateZ(250px);
+    }
+}
+
+@-o-keyframes travelanim {
+    50% {
+        transform: translateZ(250px)
+    }
+}
+
 /*
     Example of CSS sprites (a black token and a white token, 20x20px each, embedded in the same "tokens.png" 40x20px image):
 
@@ -614,7 +695,3 @@
         background-repeat: none;
     }
 */
-
-
-
-
