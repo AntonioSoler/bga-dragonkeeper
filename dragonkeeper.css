@@ -46,7 +46,90 @@
 #game_play_area_wrap {
     pointer-events: none
 }
+.cp_board {
+    display: inline-flex
+}
 
+.coin {
+    width: 40px;
+    height: 40px;
+    margin: 1px;
+    margin-left: 25px;
+    background-image: url(img/coin.png);
+    background-size: cover;
+}
+
+.goldlog {
+    width: 20px;
+    height: 20px;
+    margin: 1px;
+    background-image: url(img/coin.png);
+    background-size: cover;
+    position: relative;
+    display: inline-block
+}
+
+.guildback {
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    margin-left: 25px;
+    background-image: url(img/guildsback.jpg);
+    background-size: cover;
+    position: relative;
+    display: inline-block
+}
+
+.power2{width: 27px;height: 30px;margin: 1px;background-image: url(img/powers.png);background-size: cover;position: relative;display: inline-block;background-position: 1px center;}
+
+.guild1 {
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    margin-left: 25px;
+    background-image: url(img/guilds.jpg);
+    background-size: cover;
+    position: relative;
+    display: inline-block
+}
+
+
+.guild2 {
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    margin-left: 25px;
+    background-image: url(img/guilds.jpg);
+    background-size: cover;
+    background-position: -50px center;
+    position: relative;
+    display: inline-block;
+}
+
+.guild3 {
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    margin-left: 25px;
+    background-image: url(img/guilds.jpg);
+    background-size: cover;
+    background-position: -100px center;
+    position: relative;
+    display: inline-block;
+}
+
+
+.guild4 {
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    margin-left: 25px;
+    background-image: url(img/guilds.jpg);
+    background-size: cover;
+    background-position: -150px center;
+    position: relative;
+    display: inline-block;
+}
 #playArea {
     height: 1300px;
     width: 100%;
@@ -63,8 +146,16 @@
         width: 850px;
         pointer-events: visible;
         position: absolute;
-        left: 30%;
-        top: 20px;
+        transform: translate3d(420px,20px,0px);
+}
+
+#sky {
+        height: 100px;
+        width: 100px;
+        pointer-events: none;
+        position: absolute;
+        transform: translate3d(694px,640px,300px);
+        /* box-shadow: 0 0 2px 2px rgb(243, 0, 0); */
 }
 
 #table1 {
@@ -75,10 +166,6 @@
     right: 0;
     top:0;
     bottom:0;
-    margin-top:auto;
-    margin-bottom:auto;
-    margin-left: auto; 
-    margin-right: auto;
     transform:translate3D(0px, 0px, 10px);
     background-repeat: no-repeat;
     pointer-events: visible;
@@ -91,7 +178,7 @@
 .tableinner{
     width:100%;
     height:100%;
-    position:relative;
+    position: absolute;
 }
 
 .side1{
@@ -178,15 +265,7 @@
     height: 630px;
     width: 630px;
     background-size: 100% 100%;
-    left: 0;
-    right: 0;
-    top:0;
-    bottom:0;
-    margin-top:auto;
-    margin-bottom:auto;
-    margin-left: auto;
-    margin-right: auto;
-    transform:translate3D(0px, 0px, 100px);
+    transform: translate3D(5px, 5px, 100px);
     background-repeat: no-repeat;
     pointer-events: visible;
     position: absolute;
@@ -212,15 +291,7 @@
     height: 620px;
     width: 620px;
     background-size: 100% 100%;
-    left: 0;
-    right: 0;
-    top:0;
-    bottom:0;
-    margin-top:auto;
-    margin-bottom:auto;
-    margin-left: auto;
-    margin-right: auto;
-    transform:translate3D(0px, 0px, 190px);
+    transform: translate3D(10px, 10px, 190px);
     background-repeat: no-repeat;
     pointer-events: visible;
     position: absolute;
@@ -332,6 +403,9 @@
  transform: translate3D(0px, 0px, 5px) ;
 }
 
+.field div:nth-child(2) {
+ transform: translate3D(0px, 0px, 10px) ;
+}
 #game_play_area div
 {
     transform-style: preserve-3d
@@ -365,13 +439,13 @@
 }
 
 #drakefoot {
-    width: 100px;
-    height: 100px;
+    width: 91px;
+    height: 90px;
     background-image: url('img/dragonfoot.png');
     border-radius: 50%;
-    box-shadow: 4px 4px 2px 0px rgba(0, 0, 0, 0.22);
-    transform: translatez(10px) rotateZ(120deg);
-    position:relative;
+    box-shadow: inset 0px 0 3px 9px rgba(29, 29, 29, 0.28);
+    transform: translate3D(10px, 10px, 10px) rotateZ(120deg);
+    position:absolute;
 }
 
 #drakebody {
@@ -509,24 +583,19 @@
 }
 
 .player1 {
-    top: 700px;
-    left: 30px;
+    transform: translate3d(30px,700px,0px);
 }
 
 .player2 {
-    top: 700px;
-    right: 30px;
+    transform: translate3d(800px,700px,0px);
 }
 
 .player3 {
-    top: 1000px;
-    left: 30px;
+    transform: translate3d(30px,1000px,0px);
 }
 
-
 .player4 {
-    top: 1000px;
-    right: 30px;
+    transform: translate3d(800px,1000px,0px);
 }
 
 .boardHeader{
@@ -534,56 +603,46 @@
     width: fit-content;
     border-radius: 3px;
     margin-left: 15px;
-}
-
-.store0 {
-    height: 100px;
-    width: 100px;
-    position: absolute;
-    display: inline-block;
-    top: 55px;
-    left: 40px;
-    box-shadow: 0 0 2px 2px rgb(243, 0, 0);
+    position:  absolute;
 }
 
 .store1 {
     height: 100px;
     width: 100px;
     position: absolute;
-    display: inline-block;
-    top: 55px;
-    left: 168px;
-    box-shadow: 0 0 2px 2px rgb(243, 0, 0);
-}
-
-.store2 {
-    height: 100px;
-    width: 100px;
-    position: absolute;
-    display: inline-block;
-    top: 55px;
-    left: 301px;
-    box-shadow: 0 0 2px 2px rgb(243, 0, 0);
+    transform: translate3d(40px,55px,0px);
 }
 
 .store3 {
     height: 100px;
     width: 100px;
     position: absolute;
-    display: inline-block;
-    top: 55px;
-    left: 432px;
-    box-shadow: 0 0 2px 2px rgb(243, 0, 0);
+    transform: translate3d(168px,55px,0px);
+}
+
+.store0 {
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    transform: translate3d(302px,55px,0px);
+}
+
+.store2 {
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    transform: translate3d(432px,55px,0px);
 }
 
 .store4 {
     height: 100px;
     width: 100px;
     position: absolute;
-    display: inline-block;
-    top: 55px;
-    left: 562px;
-    box-shadow: 0 0 2px 2px rgb(243, 0, 0);
+    transform: translate3d(565px,55px,0px);
+}
+
+.cardstore{
+/* box-shadow: 0 0 2px 2px rgb(243, 0, 0); */
 }
 
 .cardstore div:nth-child(1) {
@@ -623,24 +682,17 @@
  transform: translate3D(0px, 0px, 60px) ;
 }
 
-
-
-.coin {
-    width: 15px;
-    height: 15px;
-    margin: 1px;
-    background-image: url(img/coin.png);
-    background-size: cover;
-    position: relative;
-    display: inline-block;
-    vertical-align: text-bottom
+.goldcounter {
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 18px;
+    display: inline-flex;
 }
 
 .table1 {
     width: 1024px;
     height: 738px;
     background-image: url('img/table1.jpg');
-    position: relative;
+    position: absolute;
     box-shadow: 4px 4px 3px 2px rgba(5, 5, 5, 0.68);
     background-color: white;
     border-radius: 5px;

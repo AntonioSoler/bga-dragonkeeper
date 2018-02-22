@@ -28,7 +28,7 @@
 <div id="playareascaler">
 	<div id="playArea">
 	<div id="tables"></div>
-
+    <div id="sky"></div>
 <!-- BEGIN playerboard -->                
 				<div id="playerboard_{PLAYER_ID}" class="playerboard player{PLAYER_COUNT}">
 				<h2 class="boardHeader" style="color:#{PLAYER_COLOR};"  >{PLAYER_NAME}</h2>
@@ -51,6 +51,8 @@
 var jstpl_some_game_item='<div class="my_game_item" id="my_game_item_${id}"></div>';
 
 */
+
+var jstpl_player_board = '<br>\<div class="cp_board"></b>\<div id="gold_p${id}" class="goldcounter"> <div class="coin"></div> <span id="goldcount_p${id}">0</span>\</div> <div id="guild_p${id}" class="guildback" ></div></div>';
 
 </script>  
 

@@ -33,13 +33,13 @@ function (dojo, declare) {
                     dojo.addClass("ebd-body", "mode_3d");
                     dojo.addClass("ebd-body", "enableTransitions");
                     $("globalaction_3d").innerHTML = "2D";   // controls the upper right button 
-                    this.control3dxaxis = 30;  // rotation in degrees of x axis (it has a limit of 0 to 80 degrees in the frameword so users cannot turn it upsidedown)
-                    this.control3dzaxis = 60;   // rotation in degrees of z axis
-                    this.control3dxpos = -200;   // center of screen in pixels
+                    this.control3dxaxis = 10;  // rotation in degrees of x axis (it has a limit of 0 to 80 degrees in the frameword so users cannot turn it upsidedown)
+                    this.control3dzaxis = 0;   // rotation in degrees of z axis
+                    this.control3dxpos = -100;   // center of screen in pixels
                     this.control3dypos = -100;   // center of screen in pixels
                     this.control3dscale = 0.8;   // zoom level, 1 is default 2 is double normal size, 
                     this.control3dmode3d = false ;  			// is the 3d enabled	
-                     //transform: rotateX(30deg) translate(-100px, -200px) rotateZ(60deg) scale3d(1, 1, 1); min-width: 0px;
+                     //    transform: rotateX(10deg) translate(-100px, -100px) rotateZ(0deg) scale3d(0.7, 0.7, 0.7);
     
                     $("game_play_area").style.transform = "rotatex(" + this.control3dxaxis + "deg) translate(" + this.control3dypos + "px," + this.control3dxpos + "px) rotateZ(" + this.control3dzaxis + "deg) scale3d(" + this.control3dscale + "," + this.control3dscale + "," + this.control3dscale + ")";
                 }
@@ -62,16 +62,19 @@ function (dojo, declare) {
         setup: function( gamedatas )
         {
             console.log( "Starting game setup" );
-            
+            this.param=new Array();
             // Setting up player boards
             for( var player_id in gamedatas.players )
             {
                 var player = gamedatas.players[player_id];
-                         
-                // TODO: Setting up players boards if needed
+                var player_board_div = $('player_board_'+player_id);
+                dojo.place( this.format_block('jstpl_player_board', player ), player_board_div );
+				dojo.byId("goldcount_p"+player_id).innerHTML=player['gold'];
+				if (parseInt(player_id)== this.player_id) {
+					dojo.byId("guild_p"+player_id).className= "guild"+gamedatas.player_guild ;
+					} 
             }
-            
-			
+		
 			for( var i=1 ; i<=  gamedatas.level; i++ )
             {
                 dojo.place("<div id='table"+i+"'><div id='tableinner"+i+"' class='tableinner'><div class='side1'></div><div class='side2'></div><div class='side3'></div><div class='side4'></div></div></div>", "tables" , "last" ) ;
@@ -158,6 +161,19 @@ function (dojo, declare) {
                       }
                   }
                 break;
+			case 'playPower':
+              if (this.isCurrentPlayerActive() )
+              {
+                  list = args.args.possibledestinations;
+                  this.gameconnections=new Array();
+                  for (var i = 0; i < list.length; i++)
+                  {
+                      var thiselement = list[i];
+                      thistarget=dojo.query("#"+thiselement.id ).addClass( 'borderpulse' ) ;
+                      this.gameconnections.push( dojo.connect(thistarget[0], 'onclick' , this, 'pickcardPower'))
+                  }
+              }
+            break;
             case 'dummmy':
                 break;
             }
@@ -172,18 +188,31 @@ function (dojo, declare) {
             
             switch( stateName )
             {
-            
-            /* Example:
-            
-            case 'myGameState':
-            
-                // Hide the HTML block we are displaying only during this game state
-                dojo.style( 'my_html_block_id', 'display', 'none' );
-                
+                case 'playerDonate':
+					if (this.isCurrentPlayerActive() )
+					{
+						dojo.forEach(this.gameconnections, dojo.disconnect);
+						dojo.query(".borderpulse").removeClass("borderpulse");
+						this.gameconnections=new Array();
+					}
                 break;
-           */
-           
-           
+				case 'playerPick':
+					if (this.isCurrentPlayerActive() )
+					{
+						dojo.forEach(this.gameconnections, dojo.disconnect);
+						dojo.query(".borderpulse").removeClass("borderpulse");
+						this.gameconnections=new Array();
+					}
+                break;
+				case 'playPower':
+					if (this.isCurrentPlayerActive() )
+					{
+						dojo.forEach(this.gameconnections, dojo.disconnect);
+						dojo.query(".borderpulse").removeClass("borderpulse");
+						this.gameconnections=new Array();
+					}
+                break;
+          
             case 'dummmy':
                 break;
             }               
@@ -213,7 +242,7 @@ function (dojo, declare) {
                     break;
 */
                 case 'activatePower':
-                this.addActionButton( 'yes_button', _('Activate Power'), 'activate' );
+                this.addActionButton( 'yes_button', _('Activate Power'), 'playPower' );
                 this.addActionButton( 'no_button', _('Pass'), 'pass' );
                 break;
 
@@ -230,6 +259,26 @@ function (dojo, declare) {
             script.
         
         */
+		giveGold: function ( source, destination ,amount) 
+		{
+			var animspeed=200;
+			for (var i = 1 ; i<= amount ; i++)
+			{
+				this.slideTemporaryObjectAndIncCounter( '<div class="coin spining"></div>', 'overall-content', source, destination, 1000 , animspeed );
+				animspeed += 200;
+			}
+        },
+		
+		payGold: function ( source, destination ,amount) 
+		{
+			var animspeed=200;
+			for (var i = 1 ; i<= amount ; i++)
+			{
+				dojo.byId(source).innerHTML=eval(dojo.byId(source).innerHTML) - 1;
+				this.MySlideTemporaryObject( '<div class="coin spining"></div>', 'overall-content', source, destination, 1000 , animspeed );
+				animspeed += 200;
+			}
+        },
 		
 		placecard: function ( destination, card_id ,card_type , origin , location_arg )
 		{
@@ -264,14 +313,6 @@ function (dojo, declare) {
             var src = dojo.position(mobile);
             dojo.style(mobile, "position", "absolute");
             dojo.place(mobile, new_parent, "last");
-            /*
-			var tgt = dojo.position(mobile);
-            var box = dojo.marginBox(mobile);
-
-            var left = box.l + src.x - tgt.x;
-            var top = box.t + src.y - tgt.y;
-            //dojo.style(mobile, "top", top + "px");
-            //dojo.style(mobile, "left", left + "px");*/
             return;
         },
 
@@ -279,21 +320,14 @@ function (dojo, declare) {
 			var w = elem.offsetWidth / 2,
 				h = elem.offsetHeight / 2,
 				v = {
-					a: { x: -w, y: -h, z: 0 },
-					b: { x: w, y: -h, z: 0 },
-					c: { x: w, y: h, z: 0 },
-					d: { x: -w, y: h, z: 0 }
+					  a: { x: 0, y: 0, z: 0 }
 				},
 				transform;
 			// Walk up the DOM and apply parent element transforms to each vertex
-			while (elem.id != "playArea" ) {
-			
-   			transform = this.getTransform(elem);
-				v.a = this.addVectors(this.rotateVector(v.a, transform.rotate), transform.translate );
-				v.b = this.addVectors(this.rotateVector(v.b, transform.rotate), transform.translate );
-				v.c = this.addVectors(this.rotateVector(v.c, transform.rotate), transform.translate );
-				v.d = this.addVectors(this.rotateVector(v.c, transform.rotate), transform.translate );
-				elem = elem.parentNode;
+			while (elem.id != "overall-content" ) {
+				transform = this.getTransform(elem);
+				v.a = this.addVectors( v.a , transform.translate );
+				elem = elem.parentNode;		
 			}
 			return v;
 			
@@ -309,18 +343,9 @@ function (dojo, declare) {
         rotateY = Math.asin(-matrix.m13),
         rotateX, 
         rotateZ;
-
+        position = computedStyle.position;
         rotateX = Math.atan2(matrix.m23, matrix.m33);
         rotateZ = Math.atan2(matrix.m12, matrix.m11);
-
-    /*if (Math.cos(rotateY) !== 0) {
-        rotateX = Math.atan2(matrix.m23, matrix.m33);
-        rotateZ = Math.atan2(matrix.m12, matrix.m11);
-    } else {
-        rotateX = Math.atan2(-matrix.m31, matrix.m22);
-        rotateZ = 0;
-    }*/
-
     return {
         transformStyle: val,
         matrix: matrix,
@@ -333,7 +358,8 @@ function (dojo, declare) {
             x: matrix.m41,
             y: matrix.m42,
             z: matrix.m43
-        }
+        },
+		position: position
     };
 },
 
@@ -470,12 +496,13 @@ addVectors: function (v1, v2) {
 				
              this.delayedExec(function() {
                 self.stripTransition(token);
-                
-				origin=self.computeVertexData(token);
-				destination=self.computeVertexData(finalPlace);
+
 				
-				x = origin.a.x - destination.a.x;
-				y = origin.a.y - destination.a.y;
+				origin=self.computeVertexData(token);
+				destination=self.computeVertexData(finalPlace);	
+				
+				x += origin.a.x - destination.a.x;
+				y += origin.a.y - destination.a.y;
 				z = origin.a.z - destination.a.z;
 				dojo.style (token , { transform: "translate3D("+ x +"px, "+ y +"px, "+ z +"px)" });
 				self.setTransition(token, "all " + duration + "ms ease-in-out");
@@ -483,47 +510,31 @@ addVectors: function (v1, v2) {
             
             }, function() {
                 self.stripPosition(token);
-                if (onEnd) onEnd(token);
+				if (onEnd) {
+                    setTimeout(onEnd, duration);
+                }
             }, duration, delay);
 			
         },
 		
-
-		MySlideTemporaryObject: function (_a47, _a48, from, to, _a49, _a4a)
-					{
-						var obj = dojo.place(_a47, _a48);
-						dojo.style(obj, "position", "absolute");
-						dojo.style(obj, "left", "0px");
-						dojo.style(obj, "top", "0px");
-						this.placeOnObject(obj, from);
-						var anim = this.MySlideToObject(obj, to, _a49, _a4a);
-						var onEnd = function (node)
-						{
-							dojo.destroy(node);
-						};
-						dojo.connect(anim, "onEnd", onEnd);
-						anim.play();
-						return anim;
-					},
-		
-					stripPosition : function(token) {
-					    // console.log(token + " STRIPPING");
-					    // remove any added positioning style
-					    dojo.style(token, "display", null);
-					    dojo.style(token, "top", null);
-					    dojo.style(token, "left", null);
-					    dojo.style(token, "position", null);
-						dojo.style (token , { transform: "" });
-					},
-					stripTransition : function(token) {
-					    this.setTransition(token, "");
-					},
-					setTransition : function(token, value) {
-					    dojo.style(token, "transition", value);
-					    dojo.style(token, "-webkit-transition", value);
-					    dojo.style(token, "-moz-transition", value);
-					    dojo.style(token, "-o-transition", value);
-					},
+		stripPosition : function(token) {
+			// console.log(token + " STRIPPING");
+			// remove any added positioning style
+			dojo.style(token, "display", null);
+			dojo.style(token, "top", null);
+			dojo.style(token, "left", null);
+			dojo.style(token, "position", null);
+			dojo.style (token , { transform: "" });
+		},
+		stripTransition : function(token) {
+			this.setTransition(token, "");
+		},
+		setTransition : function(token, value) {
+			dojo.style(token, "transition", value);
+			dojo.style(token, "-webkit-transition", value);
+			dojo.style(token, "-moz-transition", value);
+			dojo.style(token, "-o-transition", value);
+		},
 		resetPosition : function(token) {
             // console.log(token + " RESETING");
             // remove any added positioning style
@@ -533,6 +544,83 @@ addVectors: function (v1, v2) {
             dojo.style(token, "position", null);
 			dojo.style(token, "transform", null);
         },
+		
+		
+		slideTemporaryObjectAndIncCounter: function( obj_html , obj_parent, from, to, duration, delay ) 
+		{
+			var obj = dojo.place(obj_html, obj_parent);
+			dojo.style(obj, "position", "absolute");
+			dojo.style(obj, "left", "0px");
+			dojo.style(obj, "top", "0px");
+			this.placeOnObject(obj, from);
+			this.param.push(to);
+			var anim = this.MySlideToObject(obj, to, duration, delay);
+			onendF = dojo.hitch( this ,function(){ this.incAndDestroy(obj)});
+			dojo.connect(anim, "onEnd", onendF);
+			anim.play();
+			return anim;			
+		},
+		
+		incAndDestroy : function(node) 
+		{				
+				dojo.destroy(node);
+				target=this.param.shift();
+				dojo.byId(target).innerHTML=eval(dojo.byId(target).innerHTML) + 1;
+		},
+		
+		MySlideToObject: function (mobile_obj, destination_obj, duration, delay)
+		{
+			if (mobile_obj === null)
+			{
+				console.error("slideToObject: mobile obj is null");
+			}
+			if (destination_obj === null)
+			{
+				console.error("slideToObject: target obj is null");
+			}
+			var tgt = dojo.position(destination_obj);
+			var src = dojo.position(mobile_obj);
+			if (typeof duration == "undefined")
+			{
+				duration = 500;
+			}
+			if (typeof delay == "undefined")
+			{
+				delay = 0;
+			}
+			if (this.instantaneousMode)
+			{
+				delay = Math.min(1, delay);
+				duration = Math.min(1, duration);
+			}
+			var left = dojo.style(mobile_obj, "left");
+			var top = dojo.style(mobile_obj, "top");
+			left = left + tgt.x - src.x + (tgt.w - src.w) / 2;
+			top = top + tgt.y - src.y + (tgt.h - src.h) / 2;
+			return dojo.fx.slideTo(
+			{
+				node: mobile_obj,
+				top: top,
+				left: left,
+				delay: delay,
+				duration: duration,
+				unit: "px"
+			}
+			);
+		},
+		MySlideTemporaryObject: function (obj_html, obj_parent, from, to, duration, delay)
+		{
+			var obj = dojo.place(obj_html, obj_parent);
+			dojo.style(obj, "position", "absolute");
+			dojo.style(obj, "left", "0px");
+			dojo.style(obj, "top", "0px");
+			this.placeOnObject(obj, from);
+			var anim = this.MySlideToObject(obj, to, duration, delay);
+			onendF = dojo.hitch( this ,function(){ this.incAndDestroy(obj)});
+			dojo.connect(anim, "onEnd", onendF);
+			anim.play();
+			return anim;
+		},
 		////////////////////////////////////////////////
 
 
@@ -596,12 +684,7 @@ addVectors: function (v1, v2) {
 
             // Get the cliqued pos and Player field ID
             var cardpicked = evt.currentTarget.id;
-			var card_id = cardpicked.split('_')[1];
-			
-		/*	this.confirmationDialog( _('Are you sure you want to make this?'), dojo.hitch( this, function() {
-            this.ajaxcall( '/mygame/mygame/makeThis.html', { lock:true }, this, function( result ) {} );
-			} ) ); */
-		
+			var card_id = cardpicked.split('_')[1];	
 			dojo.forEach(this.gameconnections, dojo.disconnect);
 			
 			this.gameconnections=new Array();
@@ -609,6 +692,30 @@ addVectors: function (v1, v2) {
             if( this.checkAction( 'pickCard' ) )    // Check that this action is possible at this moment
             {            
                 this.ajaxcall( "/dragonkeeper/dragonkeeper/pickcard.html", {
+                    card_id:card_id                    
+                }, this, function( result ) {} );
+            }        			
+        },
+		
+		pickcardPower: function( evt )
+        {
+            // Stop this event propagation
+			
+            dojo.stopEvent( evt );
+			if( ! this.checkAction( 'pickcardPower' ) )
+            {   return; }
+			
+			dojo.query(".borderpulse").removeClass("borderpulse");
+
+            // Get the cliqued pos and Player field ID
+            var cardpicked = evt.currentTarget.id;
+			var card_id = cardpicked.split('_')[1];
+			dojo.forEach(this.gameconnections, dojo.disconnect);			
+			this.gameconnections=new Array();
+		
+            if( this.checkAction( 'pickcardPower' ) )    // Check that this action is possible at this moment
+            {            
+                this.ajaxcall( "/dragonkeeper/dragonkeeper/pickcardPower.html", {
                     card_id:card_id                    
                 }, this, function( result ) {} );
             }            
@@ -644,15 +751,15 @@ addVectors: function (v1, v2) {
             }            
         },
         
-        activate: function( evt )
+        playPower: function( evt )
         {
 			dojo.stopEvent( evt );
 			if( ! this.checkAction( 'playPower' ) )
             {  return; }
 			
-			if( this.checkAction( 'playPower' ) && (this.gamedatas.players[this.getActivePlayerId()]['gold']>=5 )  )    // Check that this action is possible at this moment
+			if( this.checkAction( 'playPower' ) )    // Check that this action is possible at this moment
             {            
-                this.ajaxcall( "/dragonkeeper/dragonkeeper/activate.html", {
+                this.ajaxcall( "/dragonkeeper/dragonkeeper/playPower.html", {
                 }, this, function( result ) {} );
             }
 			else
@@ -667,7 +774,7 @@ addVectors: function (v1, v2) {
 			if( ! this.checkAction( 'pass' ) )
             {  return; }
 			
-			if( this.checkAction( 'pass' ) && (this.gamedatas.players[this.getActivePlayerId()]['gold']>=5 )  )    // Check that this action is possible at this moment
+			if( this.checkAction( 'pass' ) )    // Check that this action is possible at this moment
             {            
                 this.ajaxcall( "/dragonkeeper/dragonkeeper/pass.html", {
                 }, this, function( result ) {} );
@@ -707,9 +814,11 @@ addVectors: function (v1, v2) {
             // 
 
             dojo.subscribe('movedrake', this, "notif_movedrake");
-            this.notifqueue.setSynchronous('movedrake', 1500);
+            this.notifqueue.setSynchronous('movedrake', 2000);
             dojo.subscribe('movecard', this, "notif_movecard");
-            this.notifqueue.setSynchronous('movecard', 1500);
+            this.notifqueue.setSynchronous('movecard', 2000);
+			dojo.subscribe('playergetgold', this, "notif_playergetgold");
+            this.notifqueue.setSynchronous('playergetgold', 2000);
             
         },  
         
@@ -733,14 +842,20 @@ addVectors: function (v1, v2) {
             // console.log('notif_tokenMoved');
             // console.log(notif);
             var drakepos = notif.args.drakepos;
-        this.slideToObjectAbsolute('drake', drakepos, 0, 0, 2500);
+        this.slideToObjectAbsolute('drake', drakepos, 0, 0, 1000 , 0 );
         },
         notif_movecard : function(notif) {
             // console.log('notif_tokenMoved');
             // console.log(notif);
             var destination = notif.args.destination;
-        this.slideToObjectAbsolute('card_'+notif.args.card_id, destination,0,0, 2500);
+        this.slideToObjectAbsolute('card_'+notif.args.card_id, 'sky' ,0,0, 1000, 1 , dojo.hitch( this ,function(){ this.slideToObjectAbsolute('card_'+notif.args.card_id, destination,0,0, 1000 )}));
         },
-
+		notif_playergetgold: function( notif )
+        {
+            console.log( 'notif_playergetgold' );
+            console.log( notif );
+            this.gamedatas.players[notif.args.player_id]['gold']+=notif.args.amount;
+			this.giveGold ( "sky" , "goldcount_p"+notif.args.player_id, notif.args.amount );
+        },
    });             
 });

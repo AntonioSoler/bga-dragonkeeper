@@ -70,7 +70,7 @@ $machinestates = array(
             "type" => "activeplayer",
             "args" => "argPossiblePicks",
     		"possibleactions" => array( "pickCard" ),
-    		"transitions" => array( "pickCard" => 3, "nextLevel" =>6 )
+    		"transitions" => array( "pickCard" => 3, "nextLevel" =>4 )
     ),
 
     3 => array(
@@ -80,7 +80,7 @@ $machinestates = array(
         "type" => "activeplayer",
         "args" => "argPossibleDonations",
         "possibleactions" => array( "donateCard" ),
-        "transitions" => array( "pickCard" => 4, "nextLevel" =>6 )
+        "transitions" => array( "activatePower" => 4, "nextLevel" =>4 )
     ),
     
     4 => array(
@@ -97,7 +97,8 @@ $machinestates = array(
         "description" => clienttranslate('${actplayer} have to select a target card to use the power'),
         "descriptionmyturn" => clienttranslate('${you} have to select a target card to use the power'),
         "type" => "activeplayer",
-        "possibleactions" => array( "pickCard" ),
+		"args" => "argPossibleTargets",
+        "possibleactions" => array( "pickcardPower" ),
         "transitions" => array( "pickCard" => 6 )
     ),
 

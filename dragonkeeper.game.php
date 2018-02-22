@@ -33,10 +33,11 @@ class dragonkeeper extends Table
         parent::__construct();
         
         self::initGameStateLabels( array( 
-               "path_used" => 10,
+               "stairs_used" => 10,
                "level" => 11,
                "drakepos" => 12,
-               "cardpicked" => 13
+               "cardpicked" => 13,
+			   "cardpower" => 14
             //      ...
             //    "my_first_game_variant" => 100,
             //    "my_second_game_variant" => 101,
@@ -88,7 +89,7 @@ class dragonkeeper extends Table
         // Init global values with their initial values
         
 		self::setGameStateInitialValue( 'level', 3 );
-		self::setGameStateInitialValue( 'path_used', 0 );
+		self::setGameStateInitialValue( 'stairs_used', 0 );
 		self::setGameStateInitialValue( 'drakepos', 22 );
 		        
         // Init game statistics
@@ -281,15 +282,55 @@ class dragonkeeper extends Table
             'player_name' => self::getActivePlayerName(),
             'drakepos' => 'table'.self::getGameStateValue('level').'field'.$thiscard['location_arg']
             ) );
-        self::setGamestateValue('drakepos', $thiscard['location_arg'] );
+        self::setGameStateValue('drakepos', $thiscard['location_arg'] );
         $this->cards->insertCardOnExtremePosition( $card_id , "store_".$player_id."_".$thiscardcolor , true );
-        self::setGameStateValue("cardpicked", $card_id );
+        self::setGameStateValue("cardpicked", $thiscardtype );
+		self::setGameStateValue("cardpower", $this->card_types[self::getGameStateValue("cardpicked")]['power'] );		
         self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} takes a card' ), array(
                     'player_id' => $player_id,
                     'player_name' => self::getActivePlayerName(),
                     'card_id' => $card_id,
                     'destination' => "store_".$player_id."_".$thiscardcolor
                     ) );
+		if ( self::getGameStateValue("cardpower") == 1 )
+		{
+			self::setGameStateValue("stairs_used", $player_id );
+		}
+        $this->gamestate->nextState( "pickCard" );    
+    }
+	
+	function pickcardPower( $card_id)
+    {
+		self::checkAction( 'pickcardPower' );                                //   1   => clienttranslate("Stairs"       ),
+		$player_id = self::getActivePlayerId();                              //  * 2   => clienttranslate("Secret Path" ),
+		$thiscard= $this->cards->getCard( $card_id );                        //	3   => clienttranslate("Freedom"      ),
+        $thiscardtype=$thiscard['type'];                                     // *  4   => clienttranslate("Exchange"     ),
+        $thiscardcolor= $this->getCardcolor( $thiscardtype );                //  *  5   => clienttranslate("Remote Trap"  ),
+		$cardPower=self::getGameStateValue("cardpower");
+		switch ($cardPower) {
+		case 2:	
+			
+			self::notifyAllPlayers( "movedrake", clienttranslate( '${player_name} moves the dragon using the secret path power' ), array(
+				'player_id' => $player_id,
+				'player_name' => self::getActivePlayerName(),
+				'drakepos' => 'table'.self::getGameStateValue('level').'field'.$thiscard['location_arg']
+				) );
+			self::setGameStateValue('drakepos', $thiscard['location_arg'] );
+			$this->cards->insertCardOnExtremePosition( $card_id , "store_".$player_id."_".$thiscardcolor , true );
+			self::setGameStateValue("cardpicked", $thiscardtype );    	
+			self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} takes a card' ), array(
+						'player_id' => $player_id,
+						'player_name' => self::getActivePlayerName(),
+						'card_id' => $card_id,
+						'destination' => "store_".$player_id."_".$thiscardcolor
+						) );
+			if ( $this->card_types[self::getGameStateValue("cardpicked")]['power'] == 1 )
+			{
+				self::setGameStateValue("stairs_used", $player_id );
+			}
+		break;
+		}	
+			
         $this->gamestate->nextState( "pickCard" );    
     }
 
@@ -325,22 +366,36 @@ class dragonkeeper extends Table
         {
             self::DbQuery( "UPDATE player set player_gold = player_gold + 1 WHERE Player_id = $player_id" );	
             
-            self::notifyAllPlayers( "playergetgold", clienttranslate( '${player_name} gets ${amount} <div class="goldlog"></div> from the Counter' ), array(
+            self::notifyAllPlayers( "playergetgold", clienttranslate( '${player_name} gets ${amount} <div class="goldlog"></div> from the treasure' ), array(
                             'player_id' => $player_id,
                             'player_name' => self::getActivePlayerName(),
                             'amount' => 1 ,  
                             'source' => "counter"
                     ) );
         }
-        $this->gamestate->nextState( "pickCard" );    
+        if ( in_array(self::getGameStateValue("cardpower") , array(2,4,5)))
+		{
+			$this->gamestate->nextState( "activatePower" ); 
+		}
+		else
+		{
+			$this->gamestate->nextState( "nextLevel" );
+		}
+			
     }
 
-    function activate()
+    function playPower()
     {
 		self::checkAction( 'playPower' );
-		$player_id = self::getActivePlayerId();
-        
-        
+		$player_id = self::getActivePlayerId(); 
+        $cardPower=self::getGameStateValue("cardpower");
+		
+		self::notifyAllPlayers( "playerplaypower", clienttranslate( '${player_name} chooses to play ${powername} <div class="power${power}"></div>' ), array(
+                            'player_id' => $player_id,
+                            'player_name' => self::getActivePlayerName(),
+                            'power' =>$cardPower,
+							'powername' => $this->cardpowers[$cardPower]
+                    ) );
         $this->gamestate->nextState( "playPower" );    
     }
     
@@ -418,6 +473,34 @@ class dragonkeeper extends Table
 			}
         return $result ;	
     }
+	
+	function argPossibleTargets()
+    {                                                                                 
+		$player_id = self::getActivePlayerId();                                       
+        $level=self::getGameStateValue( 'level');                                     
+		$drake_pos=self::getGameStateValue( 'drakepos');                              
+		$Xdrakepos= $drake_pos % 10 ;                                                 
+		$Ydrakepos=  ($drake_pos - $drake_pos % 10) / 10;                   //   1   => clienttranslate("Stairs"       ),
+        $result=  array( 'possibledestinations' => array() );               //  * 2   => clienttranslate("Secret Path" ),
+        switch ( self::getGameStateValue("cardpower") )                     //	3   => clienttranslate("Freedom"      ),
+		{                                                                   // *  4   => clienttranslate("Exchange"     ),
+			case "2":                                                       //  *  5   => clienttranslate("Remote Trap"  ),
+				$sql="SELECT concat('card_',card_id) id from cards where ( card_location like 'table".$level."' ) and ( ". $Xdrakepos ." = mod( card_location_arg , 10 ))";
+			    $result["possibledestinations"] = self::getObjectListFromDB( $sql );	
+			break;
+			case "4":
+				$sql="SELECT concat('card_',card_id) id from cards where (card_location , card_location_arg) in ( SELECT card_location,max(card_location_arg) FROM cards WHERE card_location like 'store_%' and not (card_location LIKE 'store_".$player_id."_%' ) group by card_location)";
+			    $result["possibledestinations"] = self::getObjectListFromDB( $sql );	 
+			break;
+			case "5":
+				$sql="SELECT concat('card_',card_id) id from cards where card_location like 'table".$level."' ";
+			    $result["possibledestinations"] = self::getObjectListFromDB( $sql );
+			
+			break;
+		}
+		
+        return $result ;	
+    }
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state actions
@@ -436,15 +519,17 @@ class dragonkeeper extends Table
     function stNextPlayer()
     {
         // Do some stuff ...
-        
+        self::setGameStateValue("cardpower",0);
         // (very often) go to another gamestate
         if ( self::getGameStateValue( 'level' ) > 1  )
         {
             $this->activeNextPlayer();
             $this->gamestate->nextState( "nextPlayer" );
         }
-
-        $this->gamestate->nextState( "endGame" );
+        else
+		{
+			$this->gamestate->nextState( "endGame" );
+		}
     }   
 
     function stendGameScoring()

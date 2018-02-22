@@ -70,6 +70,14 @@
 		self::ajaxResponse();    
     }
     
+	 public function pickcardPower()
+    {
+		self::setAjaxMode();
+		$card_id = self::getArg( "card_id", AT_posint, true );
+		$this->game->pickcardPower($card_id);
+		self::ajaxResponse();    
+    }
+	
     public function donatecard()
     {
 		self::setAjaxMode();
@@ -78,10 +86,10 @@
 		self::ajaxResponse();    
     }
 
-    public function activate()
+    public function playPower()
     {
 		self::setAjaxMode();	
-		$this->game->activate();
+		$this->game->playPower();
 		self::ajaxResponse();    
     }
     
