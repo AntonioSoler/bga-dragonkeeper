@@ -57,7 +57,78 @@
     margin-left: 25px;
     background-image: url(img/coin.png);
     background-size: cover;
+    display:  inline-block;
 }
+
+.1_header {
+    width: 40px;
+    height: 40px;
+    margin: 1px;
+    margin-left: 25px;
+    background-image: url(img/tiles.jpg);
+    background-size: initial;
+    background-position: -213px -25px;
+    font-size: 14px;
+    color: red;
+    font-weight:  bold;
+}
+
+.2_header {
+    width: 40px;
+    height: 40px;
+    margin: 1px;
+    margin-left: 25px;
+    background-image: url(img/tiles.jpg);
+    background-size: initial;
+    background-position: -311px -121px;
+    font-size: 14px;
+    color: #99adce;
+    font-weight:  bold;
+    display: inline-block;
+}
+
+.3_header {
+    width: 40px;
+    height: 40px;
+    margin: 1px;
+    margin-left: 25px;
+    background-image: url(img/tiles.jpg);
+    background-size: initial;
+    background-position: -311px -220px;
+    font-size: 14px;
+    color: #f9a11a;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.4_header {
+    width: 40px;
+    height: 40px;
+    margin: 1px;
+    margin-left: 25px;
+    background-image: url(img/tiles.jpg);
+    background-size: initial;
+    background-position: -311px -320px;
+    font-size: 14px;
+    color: greenyellow;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.5_header {
+    width: 40px;
+    height: 40px;
+    margin: 1px;
+    margin-left: 25px;
+    background-image: url(img/tiles.jpg);
+    background-size: initial;
+    background-position: -312px -522px;
+    font-size: 14px;
+    color: violet;
+    font-weight: bold;
+    display: inline-block;
+}
+
 
 .goldlog {
     width: 20px;
@@ -66,7 +137,9 @@
     background-image: url(img/coin.png);
     background-size: cover;
     position: relative;
-    display: inline-block
+    display: inline-block;
+    color: #f9a11a;
+    font-weight: bold;
 }
 
 .guildback {
@@ -77,10 +150,52 @@
     background-image: url(img/guildsback.jpg);
     background-size: cover;
     position: relative;
-    display: inline-block
+    display: inline-block;
+    border-radius: 4px;
+    box-shadow: 4px 4px 2px 0px rgba(0, 0, 0, 0.22);
 }
 
-.power2{width: 27px;height: 30px;margin: 1px;background-image: url(img/powers.png);background-size: cover;position: relative;display: inline-block;background-position: 1px center;}
+.power2{
+    width: 27px;
+    height: 30px;
+    margin: 1px;
+    background-image: url(img/powers.png);
+    background-size: cover;
+    position: relative;
+    display: inline-block;
+    background-position: 1px center;
+}
+
+.power3{
+    width: 27px;
+    height: 30px;
+    margin: 1px;
+    background-image: url(img/powers.png);
+    background-size: cover;
+    position: relative;
+    display: inline-block;
+    background-position: 29px center;
+}
+.power4{
+    width: 26px;
+    height: 30px;
+    margin: 1px;
+    background-image: url(img/powers.png);
+    background-size: cover;
+    position: relative;
+    display: inline-block;
+    background-position: 86px center;
+}
+.power5{
+    width: 29px;
+    height: 30px;
+    margin: 1px;
+    background-image: url(img/powers.png);
+    background-size: cover;
+    position: relative;
+    display: inline-block;
+    background-position: 60px center;
+}
 
 .guild1 {
     width: 50px;
@@ -90,9 +205,10 @@
     background-image: url(img/guilds.jpg);
     background-size: cover;
     position: relative;
-    display: inline-block
+    display: inline-block;
+    box-shadow: 4px 4px 2px 0px rgba(0, 0, 0, 0.22);
+    border-radius:  4px;
 }
-
 
 .guild2 {
     width: 50px;
@@ -104,6 +220,8 @@
     background-position: -50px center;
     position: relative;
     display: inline-block;
+    box-shadow: 4px 4px 2px 0px rgba(0, 0, 0, 0.22);
+    border-radius:  4px;
 }
 
 .guild3 {
@@ -116,8 +234,9 @@
     background-position: -100px center;
     position: relative;
     display: inline-block;
+    box-shadow: 4px 4px 2px 0px rgba(0, 0, 0, 0.22);
+    border-radius:  4px;
 }
-
 
 .guild4 {
     width: 50px;
@@ -129,7 +248,10 @@
     background-position: -150px center;
     position: relative;
     display: inline-block;
+    box-shadow: 4px 4px 2px 0px rgba(0, 0, 0, 0.22);
+    border-radius:  4px;
 }
+
 #playArea {
     height: 1300px;
     width: 100%;
@@ -140,6 +262,38 @@
     box-shadow: 6px 6px 2px 0px rgba(0, 0, 0, 0.65);
 }
 
+@media screen and (max-width: 1913px) and (min-width: 1025px) {
+    #playareascaler {
+        transform:scale3d(0.7,0.7,0.7);
+        transform-origin: top left
+    }
+
+    #playArea {
+        width: 150%
+    }
+}
+
+@media screen and (max-width: 1024px) and (min-width: 800px) {
+    #playareascaler {
+        transform:scale3d(0.54,0.54,0.54);
+        transform-origin: top left
+    }
+
+    #playArea {
+        width: 1470px
+    }
+}
+
+@media screen and (max-width: 799px) and (min-width: 1px) {
+    #playareascaler {
+        transform:scale3d(0.5,0.5,0.5);
+        transform-origin: top left
+    }
+
+    #playArea {
+        width: 1500px
+    }
+}
 
 #tables {
         height: 650px;
@@ -154,9 +308,19 @@
         width: 100px;
         pointer-events: none;
         position: absolute;
-        transform: translate3d(694px,640px,300px);
+        transform: translate3d(800px,760px,700px);
         /* box-shadow: 0 0 2px 2px rgb(243, 0, 0); */
 }
+
+#nowhere {
+        height: 200px;
+        width: 200px;
+        pointer-events: none;
+        position: absolute;
+        transform: translate3d(-1000px,433px,1000px);
+        /* box-shadow: 0 0 8px 9px rgb(243, 0, 0); */
+}
+
 
 #table1 {
     height: 640px;
@@ -403,9 +567,14 @@
  transform: translate3D(0px, 0px, 5px) ;
 }
 
+.field:hover .card:nth-child(1) {
+ transform: translate3D(0px, 0px, 105px) scale3d(1.5,1.5,1.5) ;
+}
+
 .field div:nth-child(2) {
  transform: translate3D(0px, 0px, 10px) ;
 }
+
 #game_play_area div
 {
     transform-style: preserve-3d
@@ -419,6 +588,8 @@
     box-shadow: 4px 4px 2px 0px rgba(0, 0, 0, 0.22);
     z-index:100;
     position:absolute;
+    transition: all 1000ms ease-in-out;
+    border-radius: 4px;
 }
 
 .card::after {
@@ -446,6 +617,7 @@
     box-shadow: inset 0px 0 3px 9px rgba(29, 29, 29, 0.28);
     transform: translate3D(10px, 10px, 10px) rotateZ(120deg);
     position:absolute;
+    transition: all 2000ms ease-in-out;
 }
 
 #drakebody {
@@ -641,53 +813,123 @@
     transform: translate3d(565px,55px,0px);
 }
 
+.flamesdiv {
+    height: 100px;
+    width: 200px;
+    position: absolute;
+    transform: translate3d(38px,187px,0px);
+    /* box-shadow: 0 0 2px 2px rgb(243, 0, 0); */
+}
+
 .cardstore{
 /* box-shadow: 0 0 2px 2px rgb(243, 0, 0); */
 }
 
 .cardstore div:nth-child(1) {
- transform: translate3D(0px, 0px, 5px) ;
-}
-.cardstore div:nth-child(2) {
  transform: translate3D(0px, 0px, 10px) ;
 }
-.cardstore div:nth-child(3) {
- transform: translate3D(0px, 0px, 15px) ;
-}
-.cardstore div:nth-child(4) {
+.cardstore div:nth-child(2) {
  transform: translate3D(0px, 0px, 20px) ;
 }
-.cardstore div:nth-child(5) {
- transform: translate3D(0px, 0px, 25px) ;
-}
-.cardstore div:nth-child(6) {
+.cardstore div:nth-child(3) {
  transform: translate3D(0px, 0px, 30px) ;
 }
-.cardstore div:nth-child(7) {
- transform: translate3D(0px, 0px, 35px) ;
-}
-.cardstore div:nth-child(8) {
+.cardstore div:nth-child(4) {
  transform: translate3D(0px, 0px, 40px) ;
 }
-.cardstore div:nth-child(9) {
- transform: translate3D(0px, 0px, 45px) ;
-}
-.cardstore div:nth-child(10) {
+.cardstore div:nth-child(5) {
  transform: translate3D(0px, 0px, 50px) ;
 }
+.cardstore div:nth-child(6) {
+ transform: translate3D(0px, 0px, 60px) ;
+}
+.cardstore div:nth-child(7) {
+ transform: translate3D(0px, 0px, 70px) ;
+}
+.cardstore div:nth-child(8) {
+ transform: translate3D(0px, 0px, 80px) ;
+}
+.cardstore div:nth-child(9) {
+ transform: translate3D(0px, 0px, 90px) ;
+}
+.cardstore div:nth-child(10) {
+ transform: translate3D(0px, 0px, 100px) ;
+}
 .cardstore div:nth-child(11) {
- transform: translate3D(0px, 0px, 55px) ;
+ transform: translate3D(0px, 0px, 110px) ;
 }
 .cardstore div:nth-child(12) {
- transform: translate3D(0px, 0px, 60px) ;
+ transform: translate3D(0px, 0px, 120px) ;
+}
+.cardstore div:nth-child(13) {
+ transform: translate3D(0px, 0px, 1300px) ;
+}
+.cardstore div:nth-child(14) {
+ transform: translate3D(0px, 0px, 140px) ;
+}
+.cardstore div:nth-child(15) {
+ transform: translate3D(0px, 0px, 150px) ;
+}
+.activeplayer .cardstore:hover div:nth-child(1) {
+ transform: translate3D(-140px, 120px, 20px) rotateY(15deg)   ;
+}
+.activeplayer .cardstore:hover div:nth-child(2) {
+ transform: translate3D(-100px, 120px, 20px) rotateY(15deg);
+}
+.activeplayer .cardstore:hover div:nth-child(3) {
+ transform: translate3D(-60px, 120px, 20px) rotateY(15deg)   ;
+}
+.activeplayer .cardstore:hover div:nth-child(4) {
+ transform: translate3D(-20px, 120px, 20px) rotateY(15deg)   ;
+}
+.activeplayer .cardstore:hover div:nth-child(5) {
+ transform: translate3D(20px, 120px, 20px) rotateY(15deg)   ;
+}
+.activeplayer .cardstore:hover div:nth-child(6) {
+ transform: translate3D(60px, 120px, 20px) rotateY(15deg)   ;
+}
+.activeplayer .cardstore:hover div:nth-child(7) {
+ transform: translate3D(100px, 120px, 20px) rotateY(15deg)   ;
+}
+.activeplayer .cardstore:hover div:nth-child(8) {
+ transform: translate3D(140px, 120px, 20px) rotateY(15deg)   ;
+}
+.activeplayer .cardstore:hover div:nth-child(9) {
+ transform: translate3D(180px, 120px, 20px) rotateY(15deg)   ;
+}
+.activeplayer .cardstore:hover div:nth-child(10) {
+ transform: translate3D(220px, 120px, 20px) rotateY(15deg)   ;
+}
+.activeplayer .cardstore:hover div:nth-child(11) {
+ transform: translate3D(260px,120px, 20px) rotateY(15deg)   ;
+}
+.activeplayer .cardstore:hover div:nth-child(12) {
+ transform: translate3D(300px,120px, 20px) rotateY(15deg)   ;
+}
+.activeplayer .cardstore:hover div:nth-child(13) {
+ transform: translate3D(340px,120px, 20px) rotateY(15deg)   ;
+}
+.activeplayer .cardstore:hover div:nth-child(14) {
+ transform: translate3D(380px,120px, 20px) rotateY(15deg)   ;
+}
+.activeplayer .cardstore:hover div:nth-child(15) {
+ transform: translate3D(420px,120px, 20px) rotateY(15deg)   ;
 }
 
 .goldcounter {
     font-family: "Roboto", Arial, sans-serif;
     font-size: 18px;
-    display: inline-flex;
+    font-weight:  bold;
+    display: inline-block;
+    text-shadow: 1px 0 1px #fff, 0 -1px 1px #fff, 0 1px 1px #fff, -1px 0 1px #fff;
 }
 
+.goldcounter span{
+    margin-left: 15px;
+    margin-top: 14px;
+    /* position:absolute; */
+    display:  inline-block;
+}
 .table1 {
     width: 1024px;
     height: 738px;

@@ -69,8 +69,9 @@ $machinestates = array(
     		"descriptionmyturn" => clienttranslate('${you} must pick a card to take'),
             "type" => "activeplayer",
             "args" => "argPossiblePicks",
+			"action" => "stCheckpick",
     		"possibleactions" => array( "pickCard" ),
-    		"transitions" => array( "pickCard" => 3, "nextLevel" =>4 )
+    		"transitions" => array( "pickCard" => 3, "nextLevel" =>7 )
     ),
 
     3 => array(
@@ -79,8 +80,9 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must pick a card to donate'),
         "type" => "activeplayer",
         "args" => "argPossibleDonations",
+		"action" => "stCheckdonate",
         "possibleactions" => array( "donateCard" ),
-        "transitions" => array( "activatePower" => 4, "nextLevel" =>4 )
+        "transitions" => array( "activatePower" => 4, "nextLevel" =>7 , "nextPlayer" => 6 )
     ),
     
     4 => array(
@@ -88,7 +90,8 @@ $machinestates = array(
         "description" => clienttranslate('${actplayer} may activate now the special power of the card'),
         "descriptionmyturn" => clienttranslate('${you} may activate now the special power of the card'),
         "type" => "activeplayer",
-        "possibleactions" => array( "playPower" , "pass" ),
+        "args" => "argPowertype",
+		"possibleactions" => array( "playPower" , "pass" ),
         "transitions" => array( "playPower" => 5 , "pass"=> 6 )
     ),
 
@@ -98,8 +101,9 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} have to select a target card to use the power'),
         "type" => "activeplayer",
 		"args" => "argPossibleTargets",
+		"action" => "stCheckpower",
         "possibleactions" => array( "pickcardPower" ),
-        "transitions" => array( "pickCard" => 6 )
+        "transitions" => array( "pickCard" => 6 , "nextLevel" =>7 )
     ),
 
     6 => array(
@@ -111,6 +115,16 @@ $machinestates = array(
         "transitions" => array( "endGameScoring" => 90, "nextPlayer" => 2 )
     ),
 
+	7 => array(
+        "name" => "nextLevel",
+		"description" => clienttranslate('There are no more possible moves in this level'),
+        "description" => '',
+        "type" => "game",
+        "action" => "stNextLevel",
+        "updateGameProgression" => true,   
+        "transitions" => array( "endGameScoring" => 90, "nextPlayer" => 2 )
+    ),
+	
     90 => array(
         "name" => "endGameScoring",
         "description" => clienttranslate('Scoring'),

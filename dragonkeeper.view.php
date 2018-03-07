@@ -57,7 +57,8 @@
 				$this->page->insert_block( "playerboard", array( "PLAYER_ID" => $player['player_id'],
 			                                            "PLAYER_NAME" => $player['player_name'],
 														"PLAYER_COLOR" => $player['player_color'],
-														"PLAYER_COUNT" => $playercount
+														"PLAYER_COUNT" => $playercount ,
+														"ACTIVEPLAYER" => "activeplayer"
                                                       ));
 			}
 		}
@@ -69,7 +70,8 @@
 				$this->page->insert_block( "playerboard", array( "PLAYER_ID" => $player['player_id'],
 			                                            "PLAYER_NAME" => $player['player_name'],
 														"PLAYER_COLOR" => $player['player_color'],
-														"PLAYER_COUNT" => $playercount
+														"PLAYER_COUNT" => $playercount,
+														"ACTIVEPLAYER" => " "
                                                       ));
 			}
 		}

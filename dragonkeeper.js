@@ -31,14 +31,14 @@ function (dojo, declare) {
 
             if (!dojo.hasClass("ebd-body", "mode_3d")) {
                     dojo.addClass("ebd-body", "mode_3d");
-                    dojo.addClass("ebd-body", "enableTransitions");
-                    $("globalaction_3d").innerHTML = "2D";   // controls the upper right button 
+                    //dojo.addClass("ebd-body", "enableTransitions");
+                    $("globalaction_3d").innerHTML = "3D";   // controls the upper right button 
                     this.control3dxaxis = 10;  // rotation in degrees of x axis (it has a limit of 0 to 80 degrees in the frameword so users cannot turn it upsidedown)
                     this.control3dzaxis = 0;   // rotation in degrees of z axis
                     this.control3dxpos = -100;   // center of screen in pixels
                     this.control3dypos = -100;   // center of screen in pixels
                     this.control3dscale = 0.8;   // zoom level, 1 is default 2 is double normal size, 
-                    this.control3dmode3d = false ;  			// is the 3d enabled	
+                    this.control3dmode3d = true ;  			// is the 3d enabled	
                      //    transform: rotateX(10deg) translate(-100px, -100px) rotateZ(0deg) scale3d(0.7, 0.7, 0.7);
     
                     $("game_play_area").style.transform = "rotatex(" + this.control3dxaxis + "deg) translate(" + this.control3dypos + "px," + this.control3dxpos + "px) rotateZ(" + this.control3dzaxis + "deg) scale3d(" + this.control3dscale + "," + this.control3dscale + "," + this.control3dscale + ")";
@@ -71,7 +71,8 @@ function (dojo, declare) {
                 dojo.place( this.format_block('jstpl_player_board', player ), player_board_div );
 				dojo.byId("goldcount_p"+player_id).innerHTML=player['gold'];
 				if (parseInt(player_id)== this.player_id) {
-					dojo.byId("guild_p"+player_id).className= "guild"+gamedatas.player_guild ;
+					dojo.byId("guild_p"+player_id).className= "guildtile guild"+gamedatas.player_guild ;
+				    this.addTooltipToClass("guildtile", _('This is your guild color, the tiles of this color that you collect will take away points '),"");
 					} 
             }
 		
@@ -107,6 +108,12 @@ function (dojo, declare) {
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
 
+			this.addTooltipToClass("guildback", _("Your opponent unknown guild color"), "");
+			
+			this.addTooltipToClass("flamesdiv", _("At the end of each level a number of coins have to be paid as tribute depending on the remaining cards on the level, 1 coin for 1-5 cards, 2 coins for 6-8 cards and 3 coins for more than 9 cards"), "")
+			
+			
+			
             console.log( "Ending game setup" );
         },
        
@@ -136,13 +143,14 @@ function (dojo, declare) {
            
             case 'playerPick':
               if (this.isCurrentPlayerActive() )
-              {
+              {   
+
                   list = args.args.possibledestinations;
                   this.gameconnections=new Array();
                   for (var i = 0; i < list.length; i++)
                   {
                       var thiselement = list[i];
-                      thistarget=dojo.query("#"+thiselement+">div" ).addClass( 'borderpulse' ) ;
+                      thistarget=dojo.query("#"+thiselement.id ).addClass( 'borderpulse' ) ;
                       this.gameconnections.push( dojo.connect(thistarget[0], 'onclick' , this, 'pickcard'))
                   }
               }
@@ -156,7 +164,7 @@ function (dojo, declare) {
                       for (var i = 0; i < list.length; i++)
                       {
                           var thiselement = list[i];
-                          thistarget=dojo.query("#"+thiselement+">div" ).addClass( 'borderpulse' ) ;
+                          thistarget=dojo.query("#"+thiselement.id ).addClass( 'borderpulse' ) ;
                           this.gameconnections.push( dojo.connect(thistarget[0], 'onclick' , this, 'donatecard'))
                       }
                   }
@@ -174,6 +182,27 @@ function (dojo, declare) {
                   }
               }
             break;
+			case 'activatePower':  
+				
+				if (this.isCurrentPlayerActive() )                             //  1   => clienttranslate("Stairs"       ),
+				{                                                              //  2   => clienttranslate("Secret Path" ),
+				  switch(args.args.cardpower)                                  //  3   => clienttranslate("Freedom"      ),
+					{                                                          //  4   => clienttranslate("Prisoners Exchange"),
+																			   //  5   => clienttranslate("Remote Trap"  ),
+						  
+						 case '2':
+						  this.gamedatas.gamestate.descriptionmyturn = _('Do you want to activate the power of the card Secret Path <div class="power2"></div> ') ;
+						  break; 
+						
+						 case '4':
+						  this.gamedatas.gamestate.descriptionmyturn = _('Do you want to activate the power of the card Prisoners Exchange <div class="power4"></div> ') ;
+						  break; 
+						case '5':
+						  this.gamedatas.gamestate.descriptionmyturn = _('Do you want to activate power of the card Remote Trap <div class="power5"></div> ') ;
+						  break;
+					}
+					this.updatePageTitle();
+				}
             case 'dummmy':
                 break;
             }
@@ -288,7 +317,7 @@ function (dojo, declare) {
 			
 			//dojo.style('stile_back_'+location_arg , "background-position", position);
             innercard="<div id='card_"+card_id+"' class='card' style='background-position:"+position+"; ";
-            innercard+=" transform: translateZ("+5*location_arg+"px)";  
+            //innercard+=" transform: translateZ("+5*location_arg+"px)";  
             innercard+="'></div>";
 			dojo.place( innercard , destination, "last");
             
@@ -616,7 +645,7 @@ addVectors: function (v1, v2) {
 			dojo.style(obj, "top", "0px");
 			this.placeOnObject(obj, from);
 			var anim = this.MySlideToObject(obj, to, duration, delay);
-			onendF = dojo.hitch( this ,function(){ this.incAndDestroy(obj)});
+			onendF = dojo.hitch( this ,function(){ dojo.destroy(obj)});
 			dojo.connect(anim, "onEnd", onendF);
 			anim.play();
 			return anim;
@@ -819,6 +848,14 @@ addVectors: function (v1, v2) {
             this.notifqueue.setSynchronous('movecard', 2000);
 			dojo.subscribe('playergetgold', this, "notif_playergetgold");
             this.notifqueue.setSynchronous('playergetgold', 2000);
+			dojo.subscribe('playerpaysgold', this, "notif_playerpaysgold");
+            this.notifqueue.setSynchronous('playerpaysgold', 2000);
+			dojo.subscribe('discard', this, "notif_discard");
+            this.notifqueue.setSynchronous('discard', 2000);
+			dojo.subscribe('levelchange', this, "notif_levelchange");
+            this.notifqueue.setSynchronous('levelchange', 8000);
+			dojo.subscribe('notif_finalScore', this, "notif_finalScore");
+            this.notifqueue.setSynchronous('notif_finalScore', 8000);
             
         },  
         
@@ -842,11 +879,14 @@ addVectors: function (v1, v2) {
             // console.log('notif_tokenMoved');
             // console.log(notif);
             var drakepos = notif.args.drakepos;
+			
+		setTimeout(function() 
+			{
+			dojo.style ($("drakefoot") ,{ transform: "translate3D(10px, 10px, 10px) rotateZ("+ Math.floor((Math.random() * 180) + 1) +"deg)" });
+			} , 1);
         this.slideToObjectAbsolute('drake', drakepos, 0, 0, 1000 , 0 );
         },
         notif_movecard : function(notif) {
-            // console.log('notif_tokenMoved');
-            // console.log(notif);
             var destination = notif.args.destination;
         this.slideToObjectAbsolute('card_'+notif.args.card_id, 'sky' ,0,0, 1000, 1 , dojo.hitch( this ,function(){ this.slideToObjectAbsolute('card_'+notif.args.card_id, destination,0,0, 1000 )}));
         },
@@ -857,5 +897,44 @@ addVectors: function (v1, v2) {
             this.gamedatas.players[notif.args.player_id]['gold']+=notif.args.amount;
 			this.giveGold ( "sky" , "goldcount_p"+notif.args.player_id, notif.args.amount );
         },
+		notif_playerpaysgold: function( notif )
+        {
+            console.log( 'notif_playerpaysgold' );
+            console.log( notif );
+            this.gamedatas.players[notif.args.player_id]['gold']+=notif.args.amount;
+			this.payGold ( "goldcount_p"+notif.args.player_id , "flames_"+notif.args.player_id , notif.args.amount );
+        },
+		notif_discard : function(notif) {
+            var destination = notif.args.destination;
+        this.slideToObjectAbsolute('card_'+notif.args.card_id, 'nowhere' ,0,0, 1000, 1 , dojo.hitch( this ,function(){ dojo.destroy('card_'+notif.args.card_id) }));
+        },
+		notif_levelchange : function(notif) {
+            console.log('notif_levelchange');
+			console.log( notif );
+            //debugger;
+            var drakepos = notif.args.drakepos;
+			var level = notif.args.level ;
+			this.gamedatas.level=level;
+        this.slideToObjectAbsolute('drake', drakepos, 0, 0, 1000 , 0 );
+		this.slideToObjectAbsolute('table'+level, 'nowhere' ,0,0, 2000, 1 , dojo.hitch( this ,function(){ dojo.destroy('table'+level) }));
+        },
+		notif_finalScore: function (notif) 
+		{
+            console.log('**** Notification : finalScore');
+            console.log(notif);
+			id     = _(notif.args.id);
+			title  = _(notif.args.title);
+			header = _(notif.args.header);
+			footer = _(notif.args.footer);
+			closing= _(notif.args.closing);
+			
+			for (i in this.gamedatas.players )
+				{
+					this.scoreCtrl[ i ].setValue( notif.args.players[i].score );
+				}
+			
+            this.displayTableWindow( id, title, notif.args.table, header, footer, closing);
+        }
+		
    });             
 });

@@ -76,7 +76,59 @@ $stats_type = array(
         "turns_number" => array("id"=> 10,
                     "name" => totranslate("Number of turns"),
                     "type" => "int" ),
-    
+					
+        "blue_picked" => array("id"=> 11,
+                    "name" => totranslate("blue cards picked"),
+                    "type" => "int" ),
+					
+        "yellow_picked" => array("id"=> 12,
+                    "name" => totranslate("yellow cards picked"),
+                    "type" => "int" ),
+					
+        "green_picked" => array("id"=> 13,
+                    "name" => totranslate("green cards picked"),
+                    "type" => "int" ),
+					
+        "purple_picked" => array("id"=> 14,
+                    "name" => totranslate("purple cards picked"),
+					"type" => "int" ),
+					
+		"red_picked" => array("id"=> 15,
+                    "name" => totranslate("red cards picked"),
+					"type" => "int" ),
+					
+        "player_guild" => array("id"=> 16,
+                    "name" => totranslate("Player guild (1=blue, 2=yellow, 3=green, 4=purple ) "),
+                    "type" => "int" ),
+					
+        "player_gold" => array("id"=> 17,
+                    "name" => totranslate("Gold"),
+                    "type" => "int" ),
+					
+		"blue_score" => array("id"=> 18,
+                    "name" => totranslate("blue cards score"),
+                    "type" => "int" ),
+					
+        "yellow_score" => array("id"=> 19,
+                    "name" => totranslate("yellow cards score"),
+                    "type" => "int" ),
+					
+        "green_score" => array("id"=> 20,
+                    "name" => totranslate("green cards score"),
+                    "type" => "int" ),
+					
+        "purple_score" => array("id"=> 21,
+                    "name" => totranslate("purple cards score"),
+					"type" => "int" ),
+					
+		"red_score" => array("id"=> 22,
+                    "name" => totranslate("red cards score"),
+					"type" => "int" ),
+		
+		"score_gold" => array("id"=> 17,
+                    "name" => totranslate("Gold Score"),
+                    "type" => "int" ),
+					
 /*
         Examples:    
         

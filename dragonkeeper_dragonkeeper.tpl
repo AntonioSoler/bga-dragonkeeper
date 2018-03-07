@@ -26,17 +26,19 @@
 -->
 
 <div id="playareascaler">
-	<div id="playArea">
+  <div id="playArea">
+	<div id="nowhere"></div>
 	<div id="tables"></div>
     <div id="sky"></div>
 <!-- BEGIN playerboard -->                
-				<div id="playerboard_{PLAYER_ID}" class="playerboard player{PLAYER_COUNT}">
+				<div id="playerboard_{PLAYER_ID}" class="playerboard player{PLAYER_COUNT} {ACTIVEPLAYER}">
 				<h2 class="boardHeader" style="color:#{PLAYER_COLOR};"  >{PLAYER_NAME}</h2>
                     <div id="store_{PLAYER_ID}_0" class="store0 cardstore"></div>
                     <div id="store_{PLAYER_ID}_1" class="store1 cardstore"></div>
                     <div id="store_{PLAYER_ID}_2" class="store2 cardstore"></div>
                     <div id="store_{PLAYER_ID}_3" class="store3 cardstore"></div>
                     <div id="store_{PLAYER_ID}_4" class="store4 cardstore"></div>
+					<div id="flames_{PLAYER_ID}"  class="flamesdiv"></div>
                 </div>
 <!-- END playerboard -->
  </div>
@@ -52,7 +54,7 @@ var jstpl_some_game_item='<div class="my_game_item" id="my_game_item_${id}"></di
 
 */
 
-var jstpl_player_board = '<br>\<div class="cp_board"></b>\<div id="gold_p${id}" class="goldcounter"> <div class="coin"></div> <span id="goldcount_p${id}">0</span>\</div> <div id="guild_p${id}" class="guildback" ></div></div>';
+var jstpl_player_board = '<br>\<div class="cp_board"></b>\<div id="gold_p${id}" class="goldcounter"> <div class="coin"><span id="goldcount_p${id}">0</span></div></div> <div id="guild_p${id}" class="guildback" ></div></div>';
 
 </script>  
 
