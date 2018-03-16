@@ -307,7 +307,7 @@ class dragonkeeper extends Table
 		self::setGameStateValue("cardtypepicked", $thiscardtype );
 		self::setGameStateValue("cardpower", $this->card_types[ $thiscardtype]['power'] );
 		
-        self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} takes a card' ), array(
+        self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} takes a tile' ), array(
                     'player_id' => $player_id,
                     'player_name' => self::getActivePlayerName(),
                     'card_id' => $card_id,
@@ -317,7 +317,15 @@ class dragonkeeper extends Table
 		{
 			self::setGameStateValue("stairs_used", $player_id );
 		}
-        $this->gamestate->nextState( "pickCard" );    
+        if ( ( self::getGameStateValue("cardpower") == 4 ) OR ( self::getGameStateValue("cardpower") == 5 ) )
+		{
+			$this->gamestate->nextState( "activatePower" );    
+		}
+		else
+		{
+			$this->gamestate->nextState( "pickCard" );    
+		}
+		
     }
 	
 	function pickcardPower( $card_id)
@@ -336,7 +344,7 @@ class dragonkeeper extends Table
 				'player_name' => self::getActivePlayerName(),
 				'drakepos' => 'table'.self::getGameStateValue('level').'field'.$thiscard['location_arg']
 				) );
-			self::notifyAllPlayers( "discard", clienttranslate( '${player_name} discards the Secret Path card' ), array(
+			self::notifyAllPlayers( "discard", clienttranslate( '${player_name} discards the Secret Path tile' ), array(
 						'player_id' => $player_id,
 						'player_name' => self::getActivePlayerName(),
 						'card_id' => $oldcard
@@ -346,7 +354,7 @@ class dragonkeeper extends Table
 			self::setGameStateValue('drakepos', $thiscard['location_arg'] );
 			$this->cards->insertCardOnExtremePosition( $card_id , "store_".$player_id."_".$thiscardcolor , true );
 			   	
-			self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} takes a card' ), array(
+			self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} takes a tile' ), array(
 						'player_id' => $player_id,
 						'player_name' => self::getActivePlayerName(),
 						'card_id' => $card_id,
@@ -362,7 +370,7 @@ class dragonkeeper extends Table
 			$targetplayer= explode('_', $thiscard['location'])[1];
 			$oldcard= self::getGameStateValue("cardpicked");
 			$oldcardcolor=$this->getCardcolor( self::getGameStateValue('cardtypepicked') ); 
-			self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} gives the Prisoners Exchange card to the other player' ), array(
+			self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} gives the Prisoners Exchange tile to the other player' ), array(
 						'player_id' => $player_id,
 						'player_name' => self::getActivePlayerName(),
 						'card_id' => $oldcard,
@@ -373,7 +381,7 @@ class dragonkeeper extends Table
 
 			$this->cards->insertCardOnExtremePosition( $card_id , "store_".$player_id."_".$thiscardcolor , true );
 			   	
-			self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} takes a card in exchange' ), array(
+			self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} takes a tile in exchange' ), array(
 						'player_id' => $player_id,
 						'player_name' => self::getActivePlayerName(),
 						'card_id' => $card_id,
@@ -387,7 +395,7 @@ class dragonkeeper extends Table
 		case 5:	   //  * 2   => ("Remote Trap" ),
 			
 			$oldcard= self::getGameStateValue("cardpicked");
-			self::notifyAllPlayers( "discard", clienttranslate( '${player_name} discards the Remote Trap card' ), array(
+			self::notifyAllPlayers( "discard", clienttranslate( '${player_name} discards the Remote Trap tile' ), array(
 						'player_id' => $player_id,
 						'player_name' => self::getActivePlayerName(),
 						'card_id' => $oldcard
@@ -397,7 +405,7 @@ class dragonkeeper extends Table
 
 			$this->cards->insertCardOnExtremePosition( $card_id , "store_".$player_id."_".$thiscardcolor , true );
 			   	
-			self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} takes a card' ), array(
+			self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} takes a tile' ), array(
 						'player_id' => $player_id,
 						'player_name' => self::getActivePlayerName(),
 						'card_id' => $card_id,
@@ -409,8 +417,14 @@ class dragonkeeper extends Table
 			}
 		break;
 		}	
-			
-        $this->gamestate->nextState( "pickCard" );    
+		if ( (self::getGameStateValue("cardpower") == 4) OR   (self::getGameStateValue("cardpower") == 5) )
+		{
+			$this->gamestate->nextState( "playerDonate" ); 
+		}
+		else
+		{	
+			$this->gamestate->nextState( "pickCard" ); 
+		}
     }
 
     function donateCard( $card_id)
@@ -434,7 +448,7 @@ class dragonkeeper extends Table
 
         $this->cards->insertCardOnExtremePosition( $card_id , "store_".$nextplayer_id."_".$thiscardcolor , true );
                                     
-        self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} gives a card to ${nextplayer_name}' ), array(
+        self::notifyAllPlayers( "movecard", clienttranslate( '${player_name} gives a tile to ${nextplayer_name}' ), array(
                     'player_id' => $player_id,
                     'player_name' => self::getActivePlayerName(),
                     'nextplayer_name' => $nextplayer_name,
@@ -446,7 +460,7 @@ class dragonkeeper extends Table
         {
             self::DbQuery( "UPDATE player set player_gold = player_gold + 1 WHERE Player_id = $player_id" );	
             
-            self::notifyAllPlayers( "playergetgold", clienttranslate( '${player_name} gets ${amount} <div class="goldlog"></div> from the treasure as the value of the card donated is 3 or more' ), array(
+            self::notifyAllPlayers( "playergetgold", clienttranslate( '${player_name} gets ${amount} <div class="goldlog"></div> from the treasure as the value of the tile donated is 3 or more' ), array(
                             'player_id' => $player_id,
                             'player_name' => self::getActivePlayerName(),
                             'amount' => 1 ,  
@@ -458,7 +472,7 @@ class dragonkeeper extends Table
 			self::setGameStateValue("stairs_used", $nextplayer_id );
 		}
 	
-        if ( (self::getGameStateValue("cardpower") == 2) OR (self::getGameStateValue("cardpower") == 4) OR (self::getGameStateValue("cardpower") == 5) )
+        if ( (self::getGameStateValue("cardpower") == 2)  )
 		{
 			$this->gamestate->nextState( "activatePower" ); 
 		}
@@ -488,9 +502,14 @@ class dragonkeeper extends Table
     {
 		self::checkAction( 'pass' );
 		$player_id = self::getActivePlayerId();
-        
-        
-        $this->gamestate->nextState( "pass" );    
+        if ( ( self::getGameStateValue("cardpower") == 4 ) OR ( self::getGameStateValue("cardpower") == 5 ) )
+		{
+			$this->gamestate->nextState( "playerDonate" );    
+		}
+        else
+		{
+			$this->gamestate->nextState( "pass" );   
+		}
     }
 
 
@@ -657,15 +676,12 @@ class dragonkeeper extends Table
 			if (( $lastplayer == $thisid ) )
 			{
 				$gold=$gold - 1 ;
-				self::notifyAllPlayers( "playerpaysgold", clienttranslate( '${player_name} pays ${amount} <div class="goldlog"></div> to the treasure as this player picked the last tile of the level' ), array(
+				self::notifyAllPlayers( "playerpaysgold", clienttranslate( '${player_name} pays ${amount} <div class="goldlog"></div> for taking the last tile of the level ' ), array(
                             'player_id' => $thisid,
                             'player_name' => $thisPlayerName,
                             'amount' => 1 
                     ) );
-				if ( self::getActivePlayerId() != $thisid  )
-				{
-					$this->gamestate->changeActivePlayer( $thisid );
-				}	
+				
 			}
 			
 			if ( $stairsPlayer == $thisid ) 
@@ -674,7 +690,7 @@ class dragonkeeper extends Table
 				{
 					$this->gamestate->changeActivePlayer( $thisid );
 				}
-				self::notifyAllPlayers( "message", clienttranslate( '${player_name} is now the first player as this player has the stairs card from previous level' ), array(
+				self::notifyAllPlayers( "message", clienttranslate( '${player_name} is now the first player as this player has the <div class="stairs"></div> tile from previous level' ), array(
 						'player_name' => $thisPlayerName
 					) );
 			}
@@ -682,7 +698,7 @@ class dragonkeeper extends Table
 			if ($tribute > 0)
 			{
 				$gold=$gold - $tribute ;
-				self::notifyAllPlayers( "playerpaysgold", clienttranslate( '${player_name} pays ${amount} <div class="goldlog"></div> as tribute as there were ${cardcount} cards not picked in this level' ), array(
+				self::notifyAllPlayers( "playerpaysgold", clienttranslate( '${player_name} pays ${amount} <div class="goldlog"></div> as tribute as there were ${cardcount} tiles not picked in this level' ), array(
                             'player_id' => $thisid,
                             'player_name' => $thisPlayerName,
                             'amount' => $tribute ,
@@ -695,7 +711,10 @@ class dragonkeeper extends Table
 				if (self::getActivePlayerId() == $thisid) {
 					$this->activeNextPlayer();
 					}
-				self::eliminatePlayer( $thisid );
+				
+				//self::eliminatePlayer( $thisid );
+				self::DbQuery( "UPDATE player set player_eliminated = 1 WHERE Player_id = $thisid" );
+				
 				self::notifyAllPlayers( "message", clienttranslate( '${player_name} <b>is now eliminated from the game as this player cannot pay the tribute!</b>' ), array(
 						'player_name' => $thisPlayerName
 					) );
@@ -749,7 +768,14 @@ class dragonkeeper extends Table
         $result=$this->argPossibleTargets();
         if (sizeof($result["possibledestinations"]) == 0)
         {
-			$this->gamestate->nextState( "nextLevel" );
+			if ( (self::getGameStateValue("cardpower") == 4) OR  (self::getGameStateValue("cardpower") == 5) )
+			{
+				$this->gamestate->nextState( "playerDonate" ); 
+			}
+			else
+			{	
+				$this->gamestate->nextState( "pickCard" ); 
+			}
 		}
     }
 	
@@ -762,11 +788,11 @@ class dragonkeeper extends Table
         //left hand col
 		
         $table[0][0] = array( 'str' => 'Players:', 'args' => array(), 'type' => 'header');
-        $table[0][1] = array( 'str' => "<div class='1_header'>" .clienttranslate($this->cardcolors[0])."</div>", 'args' => array(), 'type' => 'header');
-        $table[0][2] = array( 'str' => "<div class='2_header'>" .clienttranslate($this->cardcolors[1])."</div>", 'args' => array(), 'type' => 'header');
-		$table[0][3] = array( 'str' => "<div class='3_header'>" .clienttranslate($this->cardcolors[2])."</div>", 'args' => array(), 'type' => 'header');
-        $table[0][4] = array( 'str' => "<div class='4_header'>" .clienttranslate($this->cardcolors[3])."</div>", 'args' => array(), 'type' => 'header');
-		$table[0][5] = array( 'str' => "<div class='5_header'>" .clienttranslate($this->cardcolors[4])."</div>", 'args' => array(), 'type' => 'header');
+        $table[0][1] = array( 'str' => "<div class='header1'></div>" .clienttranslate($this->cardcolors[1]), 'args' => array(), 'type' => 'header');
+        $table[0][2] = array( 'str' => "<div class='header3'></div>" .clienttranslate($this->cardcolors[3]), 'args' => array(), 'type' => 'header');
+		$table[0][3] = array( 'str' => "<div class='header0'></div>" .clienttranslate($this->cardcolors[0]), 'args' => array(), 'type' => 'header');
+        $table[0][4] = array( 'str' => "<div class='header2'></div>" .clienttranslate($this->cardcolors[2]), 'args' => array(), 'type' => 'header');
+		$table[0][5] = array( 'str' => "<div class='header4'></div>" .clienttranslate($this->cardcolors[4]), 'args' => array(), 'type' => 'header');
         $table[0][6] = array( 'str' => "<div class='coin'></div>".clienttranslate($this->resources["gold"])    , 'args' => array(), 'type' => 'header');
 		
 		$table[0][] = clienttranslate($this->resources["score_window_title"]);
@@ -782,6 +808,7 @@ class dragonkeeper extends Table
 			$player_gold  = self::getUniqueValueFromDb( $sql );
 			$sql = "SELECT max(player_gold) from player WHERE  player_eliminated=0 " ;
 			$max_player_gold  = self::getUniqueValueFromDb( $sql );
+			$thisplayername=$player['player_name'];
 			$score_gold = 0 ;
 			if ( $player_gold == $max_player_gold )
 			{ 
@@ -840,7 +867,7 @@ class dragonkeeper extends Table
 			{   
 				$cards_picked[$player_guild]=0;   // Remove the player guild cards
 				
-				self::notifyAllPlayers( "message" , clienttranslate( '${player_name} discards the biggest stack <div class="${color}_header"></div> and it matches this players guild ' ), 
+				self::notifyAllPlayers( "message" , clienttranslate( '${player_name} discards the highest stack <div class="header${color}"></div> and it matches this players guild : <div class="guildtile guild${color}"></div> ' ), 
 						array(			
 							'player_name' =>  $thisplayername,
 							'color' =>  $player_guild
@@ -867,7 +894,7 @@ class dragonkeeper extends Table
 				}
 				$cards_values[$player_guild]=0 ;
 				$cards_values[$min_value_stack]=0 ;
-				self::notifyAllPlayers( "message" , clienttranslate( '${player_name} discards also a second stack: <div class="${color}_header"></div>' ), 
+				self::notifyAllPlayers( "message" , clienttranslate( '${player_name} discards also a second stack: <div class="header${color}"></div>' ), 
 						array(			
 							'player_name' =>  $thisplayername,
 							'color' =>  $min_value_stack
@@ -882,6 +909,7 @@ class dragonkeeper extends Table
 			}
 			else
 			{
+				
 				$min_value = 9999;
 				for ( $j=0 ; $j < count($r); $j++ )    // What has the smaller value?
 				{
@@ -892,7 +920,7 @@ class dragonkeeper extends Table
 				   }
 				}
 				
-				self::notifyAllPlayers( "message" , clienttranslate( '${player_name} discards the biggest stack: <div class="${color}_header"></div>' ), 
+				self::notifyAllPlayers( "message" , clienttranslate( '${player_name} discards the highest stack: <div class="header${color}"></div>' ), 
 						array(			
 							'player_name' =>  $thisplayername,
 							'color' =>  $min_value_stack
@@ -901,12 +929,12 @@ class dragonkeeper extends Table
 				self::DbQuery( "UPDATE cards set card_location = 'discard' WHERE card_location like 'store_".$player_id."_".$min_value_stack."'");
 				 // 10 19 28 37   Free
 				$Release_cards=self::getUniqueValueFromDB('SELECT count(*) FROM cards WHERE  ( card_location like "store_'.$player_id.'%") AND (card_type in ( 10 ,19 , 28, 37)) ');
-				$thisplayername=$player['player_name'];
+				
 				for ($j=0 ; $j < $Release_cards ; $j++ )
 				{
 					if ( self::getUniqueValueFromDB('SELECT count(*) FROM cards WHERE ( card_location like "store_'.$player_id.'_'.$player_guild.'") AND (card_type_arg > 3 )') > 1 )
 					{
-						self::notifyAllPlayers( "message" , clienttranslate( '${player_name} uses a Release power card<div class="power3"></div> the highest valued card from this player guild does not score negatively' ), 
+						self::notifyAllPlayers( "message" , clienttranslate( '${player_name} uses a Release power tile <div class="power3"></div> the highest valued tile from this player guild does not score negatively' ), 
 						array(			
 							'player_name' =>  $thisplayername 	
 							) ) ;
@@ -931,11 +959,12 @@ class dragonkeeper extends Table
 			    self::setStat( $cards_values[4], 'purple_score', $player['player_id'] );
 			    self::setStat( $score_gold ,    'score_gold' ,  $player['player_id'] );
 			}
-			$table[$i][] = self::getStat('red_picked'   ,$player['player_id'])." cards = ". self::getStat('red_score'   ,$player['player_id'])."<div class='fa fa-star'></div>";
-			$table[$i][] = self::getStat('blue_picked'  ,$player['player_id'])." cards = ". self::getStat('blue_score'  ,$player['player_id'])."<div class='fa fa-star'></div>";
-			$table[$i][] = self::getStat('yellow_picked',$player['player_id'])." cards = ". self::getStat('yellow_score',$player['player_id'])."<div class='fa fa-star'></div>";
-			$table[$i][] = self::getStat('green_picked' ,$player['player_id'])." cards = ". self::getStat('green_score' ,$player['player_id'])."<div class='fa fa-star'></div>";
-			$table[$i][] = self::getStat('purple_picked',$player['player_id'])." cards = ". self::getStat('purple_score',$player['player_id'])."<div class='fa fa-star'></div>";
+			
+			$table[$i][] = self::getStat('blue_picked'  ,$player['player_id'])." ". clienttranslate ("tiles") ." = ". self::getStat('blue_score'  ,$player['player_id'])."<div class='fa fa-star'></div>";
+			$table[$i][] = self::getStat('green_picked' ,$player['player_id'])." ". clienttranslate ("tiles") ." = ". self::getStat('green_score' ,$player['player_id'])."<div class='fa fa-star'></div>";
+			$table[$i][] = self::getStat('red_picked'   ,$player['player_id'])." ". clienttranslate ("tiles") ." = ". self::getStat('red_score'   ,$player['player_id'])."<div class='fa fa-star'></div>";
+			$table[$i][] = self::getStat('yellow_picked',$player['player_id'])." ". clienttranslate ("tiles") ." = ". self::getStat('yellow_score',$player['player_id'])."<div class='fa fa-star'></div>";
+			$table[$i][] = self::getStat('purple_picked',$player['player_id'])." ". clienttranslate ("tiles") ." = ". self::getStat('purple_score',$player['player_id'])."<div class='fa fa-star'></div>";
 			
 			$table[$i][] = $player_gold ." <div class='goldlog'></div> = ". $score_gold ." <div class='fa fa-star'></div>";
 			
@@ -955,14 +984,16 @@ class dragonkeeper extends Table
             self::DbQuery( $sql ); 
             $i++;			
         }
-        $this->notifyAllPlayers( "notif_finalScore", '', array(
+        $players_score = self::getCollectionFromDB( "SELECT player_id id, player_score score FROM player" );
+		
+		$this->notifyAllPlayers( "notif_finalScore", '', array(
             "id" => 'finalScoring',
             "title" => $this->resources["score_window_title"],
             "table" => $table,
 			"header" =>$this->resources["win_condition"],
 			"footer" =>$this->resources["end_condition"],
 			"closing" => clienttranslate( "OK" ),
-			'players' => $players ,
+			'players' => $players_score ,
            'i18n' => array( 'header' , 'footer')
            
         ) ); 

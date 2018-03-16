@@ -78,23 +78,23 @@ $stats_type = array(
                     "type" => "int" ),
 					
         "blue_picked" => array("id"=> 11,
-                    "name" => totranslate("blue cards picked"),
+                    "name" => totranslate("blue stack size"),
                     "type" => "int" ),
 					
         "yellow_picked" => array("id"=> 12,
-                    "name" => totranslate("yellow cards picked"),
+                    "name" => totranslate("yellow stack size"),
                     "type" => "int" ),
 					
         "green_picked" => array("id"=> 13,
-                    "name" => totranslate("green cards picked"),
+                    "name" => totranslate("green stack size"),
                     "type" => "int" ),
 					
         "purple_picked" => array("id"=> 14,
-                    "name" => totranslate("purple cards picked"),
+                    "name" => totranslate("purple stack size"),
 					"type" => "int" ),
 					
 		"red_picked" => array("id"=> 15,
-                    "name" => totranslate("red cards picked"),
+                    "name" => totranslate("red stack size"),
 					"type" => "int" ),
 					
         "player_guild" => array("id"=> 16,
@@ -106,23 +106,23 @@ $stats_type = array(
                     "type" => "int" ),
 					
 		"blue_score" => array("id"=> 18,
-                    "name" => totranslate("blue cards score"),
+                    "name" => totranslate("blue tiles score"),
                     "type" => "int" ),
 					
         "yellow_score" => array("id"=> 19,
-                    "name" => totranslate("yellow cards score"),
+                    "name" => totranslate("yellow tiles score"),
                     "type" => "int" ),
 					
         "green_score" => array("id"=> 20,
-                    "name" => totranslate("green cards score"),
+                    "name" => totranslate("green tiles score"),
                     "type" => "int" ),
 					
         "purple_score" => array("id"=> 21,
-                    "name" => totranslate("purple cards score"),
+                    "name" => totranslate("purple tiles score"),
 					"type" => "int" ),
 					
 		"red_score" => array("id"=> 22,
-                    "name" => totranslate("red cards score"),
+                    "name" => totranslate("red tiles score"),
 					"type" => "int" ),
 		
 		"score_gold" => array("id"=> 17,

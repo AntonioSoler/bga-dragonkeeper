@@ -18,7 +18,8 @@
 define([
     "dojo","dojo/_base/declare",
     "ebg/core/gamegui",
-    "ebg/counter"
+    "ebg/counter",
+	"ebg/scrollmap"   
 ],
 function (dojo, declare) {
     return declare("bgagame.dragonkeeper", ebg.core.gamegui, {
@@ -60,10 +61,13 @@ function (dojo, declare) {
         */
         
         setup: function( gamedatas )
-        {
+        {   
+			// dojo.connect ($("game_play_area"), 'onclick' , this, 'dragElement' )
+			this.dragElement3d ($("pagesection_gameview"));
             console.log( "Starting game setup" );
             this.param=new Array();
-            // Setting up player boards
+			this.cardpowers = [ 1 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 2 , 0 , 3 , 0 , 4 , 0 , 5 , 0 , 0 , 2 , 0 , 3 , 0 , 4 , 0 , 5 , 0 , 0 , 2 , 0 , 3 , 0 , 4 , 0 , 5 , 0 , 0 , 2 , 0 , 3 , 0 , 4 , 0 , 5 , 0 ];
+			// Setting up player boards
             for( var player_id in gamedatas.players )
             {
                 var player = gamedatas.players[player_id];
@@ -74,11 +78,12 @@ function (dojo, declare) {
 					dojo.byId("guild_p"+player_id).className= "guildtile guild"+gamedatas.player_guild ;
 				    this.addTooltipToClass("guildtile", _('This is your guild color, the tiles of this color that you collect will take away points '),"");
 					} 
+				
             }
-		
+		    level= _("Level");
 			for( var i=1 ; i<=  gamedatas.level; i++ )
             {
-                dojo.place("<div id='table"+i+"'><div id='tableinner"+i+"' class='tableinner'><div class='side1'></div><div class='side2'></div><div class='side3'></div><div class='side4'></div></div></div>", "tables" , "last" ) ;
+                dojo.place("<div id='table"+i+"'><div id='tableinner"+i+"' class='tableinner'><div class='side1'></div><div class='side2'></div><div class='side3'></div><div class='side4'></div><span>"+level+":"+i+"</span></div></div>", "tables" , "last" ) ;
                 for (r=0; r<=4 ; r++)
 				{
 					for (c=0; c<=4 ; c++)
@@ -110,7 +115,7 @@ function (dojo, declare) {
 
 			this.addTooltipToClass("guildback", _("Your opponent unknown guild color"), "");
 			
-			this.addTooltipToClass("flamesdiv", _("At the end of each level a number of coins have to be paid as tribute depending on the remaining cards on the level, 1 coin for 1-5 cards, 2 coins for 6-8 cards and 3 coins for more than 9 cards"), "")
+			this.addTooltipToClass("flamesdiv", _("At the end of each level a number of coins have to be paid as tribute depending on the remaining tiles on the level, 1 coin for 1-5 tiles, 2 coins for 6-8 tiles and 3 coins for more than 9 tiles"), "")
 			
 			
 			
@@ -186,26 +191,31 @@ function (dojo, declare) {
 				
 				if (this.isCurrentPlayerActive() )                             //  1   => clienttranslate("Stairs"       ),
 				{                                                              //  2   => clienttranslate("Secret Path" ),
-				  switch(args.args.cardpower)                                  //  3   => clienttranslate("Freedom"      ),
+				    switch(eval(args.args.cardpower))                          //  3   => clienttranslate("Freedom"      ),
 					{                                                          //  4   => clienttranslate("Prisoners Exchange"),
-																			   //  5   => clienttranslate("Remote Trap"  ),
-						  
-						 case '2':
-						  this.gamedatas.gamestate.descriptionmyturn = _('Do you want to activate the power of the card Secret Path <div class="power2"></div> ') ;
+						 case 2:
+						  this.gamedatas.gamestate.descriptionmyturn = _('Do you want to activate the power of the Secret Path tile <div class="power2"></div> ') ;
 						  break; 
 						
-						 case '4':
-						  this.gamedatas.gamestate.descriptionmyturn = _('Do you want to activate the power of the card Prisoners Exchange <div class="power4"></div> ') ;
+						 case 4:
+						  this.gamedatas.gamestate.descriptionmyturn = _('Do you want to activate the power of the Prisoners Exchange tile <div class="power4"></div> ') ;
 						  break; 
-						case '5':
-						  this.gamedatas.gamestate.descriptionmyturn = _('Do you want to activate power of the card Remote Trap <div class="power5"></div> ') ;
+						case 5:
+						  this.gamedatas.gamestate.descriptionmyturn = _('Do you want to activate power of the Remote Trap tile <div class="power5"></div> ') ;
 						  break;
 					}
-					this.updatePageTitle();
+					setTimeout(this.updatePageTitle() , 500 )
 				}
             case 'dummmy':
                 break;
             }
+
+			dojo.query(".cardstore").forEach(function(node, index, arr){
+				setTimeout(function() 
+				{
+				   $(node.id+"_counter").innerHTML = node.childElementCount+"&#x21A8;" ;
+				},   2500 )
+			    });
         },
 
         // onLeavingState: this method is called each time we are leaving a game state.
@@ -244,9 +254,70 @@ function (dojo, declare) {
           
             case 'dummmy':
                 break;
-            }               
+            }
+			
+				
+
         }, 
 
+		dragElement3d: function(elmnt) {
+		  this.pos1 = 0;
+		  this.pos2 = 0;
+		  this.pos3 = 0;
+		  this.pos4 = 0;
+		  
+		  dojo.connect(elmnt, "onmousedown", this, "dragMouseDown");
+		  dojo.connect(elmnt, "onmouseup", this, "closeDragElement");
+		  elmnt.oncontextmenu = function () { return false; }
+		  //elmnt.style.transition = "transform 0.05s ease";
+         
+          this.drag3d=elmnt;
+			
+		},
+
+		dragMouseDown:  function(e) {
+			e = e || window.event;
+			// get the mouse cursor position at startup:
+			this.pos3 = e.clientX;
+			this.pos4 = e.clientY;
+			if (e.which == 3){
+				dojo.stopEvent( e );
+				/*document.body.requestPointerLock = document.body.requestPointerLock || document.body.mozRequestPointerLock;
+				document.body.requestPointerLock() */
+				this.dragging_3dhandler = dojo.connect(this.drag3d, "mousemove", this, "elementDrag");
+			}
+		},
+
+		elementDrag: function(e) {
+			e = e || window.event;
+			// calculate the new cursor position:
+			this.pos1 = this.pos3 - e.clientX;
+			this.pos2 = this.pos4 - e.clientY;
+			this.pos3 = e.clientX;
+			this.pos4 = e.clientY;
+			// set the element's new position:
+			
+			/*elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+			elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";*/
+			//this.change3d( this.pos2 / 3  , 0, 0, this.pos1 / 3 , 0, true, false);
+			this.change3d( e.movementY/ (-10)   , 0, 0, e.movementX / (-10) , 0, true, false);
+		  },
+
+		closeDragElement:  function(evt) {
+			/* stop moving when mouse button is released:*/
+			console.log ("mouseup");
+			if(evt.preventDefault != undefined)
+					evt.preventDefault();
+			if(evt.stopPropagation != undefined)
+				evt.stopPropagation();
+			dojo.stopEvent( evt );
+			dojo.disconnect(this.dragging_3dhandler);
+			/* document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock;
+
+			// Attempt to unlock
+			document.exitPointerLock(); */
+			
+		},
         // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
         //                        action status bar (ie: the HTML links in the status bar).
         //        
@@ -273,6 +344,7 @@ function (dojo, declare) {
                 case 'activatePower':
                 this.addActionButton( 'yes_button', _('Activate Power'), 'playPower' );
                 this.addActionButton( 'no_button', _('Pass'), 'pass' );
+				
                 break;
 
                 }
@@ -320,6 +392,22 @@ function (dojo, declare) {
             //innercard+=" transform: translateZ("+5*location_arg+"px)";  
             innercard+="'></div>";
 			dojo.place( innercard , destination, "last");
+
+			switch (this.cardpowers[eval(card_type)])
+			{
+				case 0:
+				break;
+				case 1: this.addTooltipHtml ( 'card_'+card_id , _(' <div class="stairs"></div> Stairs: the owner of this tile will be the first player on the next level') ) ;
+				break;
+				case 2: this.addTooltipHtml ( 'card_'+card_id , _(' <div class="power2"></div> Secret path: At the end of your turn you have an extra move') );
+				break;
+				case 3: this.addTooltipHtml ( 'card_'+card_id , _(' <div class="power3"></div> Release: At the end of the game if this color stack was not discarded you can use this to release one of you guild color tiles') );
+				break;
+				case 4: this.addTooltipHtml ( 'card_'+card_id , _(' <div class="power4"></div> Prisoners Exchange: You can exchange this tile with one on top of other players stacks') );
+				break;
+				case 5: this.addTooltipHtml ( 'card_'+card_id , _(' <div class="power3"></div> Remote Trap: You can exchange this tile for any other available on the board') );
+				break;
+			}
             
 		},
 		

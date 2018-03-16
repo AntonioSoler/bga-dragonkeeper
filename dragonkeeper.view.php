@@ -75,6 +75,14 @@
                                                       ));
 			}
 		}
+		
+		$this->tpl['LABEL_POWER_TITLE'] = self::_(' TILE SPECIAL POWERS:') ;
+		$this->tpl['LABEL_HELP_POWER1'] = self::_(' Stairs: the owner of this tile will be the first player on the next level') ;
+		$this->tpl['LABEL_HELP_POWER2'] = self::_(' Secret path: At the end of your turn you have an extra move') ;
+		$this->tpl['LABEL_HELP_POWER3'] = self::_(' Release: At the end of the game if this color stack was not discarded you can use this to release one of you guild color tiles');
+		$this->tpl['LABEL_HELP_POWER4'] = self::_(' Prisoners Exchange: You can exchange this tile with one on top of other players stacks') ;
+		$this->tpl['LABEL_HELP_POWER5'] = self::_(' Remote Trap: You can exchange this tile for any other available on the board') ;
+				
         /*
         
         // Examples: set the value of some element defined in your tpl file like this: {MY_VARIABLE_ELEMENT}

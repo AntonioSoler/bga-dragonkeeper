@@ -31,15 +31,15 @@ function (dojo, declare) {
 
             if (!dojo.hasClass("ebd-body", "mode_3d")) {
                     dojo.addClass("ebd-body", "mode_3d");
-                    dojo.addClass("ebd-body", "enableTransitions");
-                    $("globalaction_3d").innerHTML = "2D";   // controls the upper right button 
-                    this.control3dxaxis = 30;  // rotation in degrees of x axis (it has a limit of 0 to 80 degrees in the frameword so users cannot turn it upsidedown)
-                    this.control3dzaxis = 60;   // rotation in degrees of z axis
-                    this.control3dxpos = -200;   // center of screen in pixels
+                    //dojo.addClass("ebd-body", "enableTransitions");
+                    $("globalaction_3d").innerHTML = "3D";   // controls the upper right button 
+                    this.control3dxaxis = 10;  // rotation in degrees of x axis (it has a limit of 0 to 80 degrees in the frameword so users cannot turn it upsidedown)
+                    this.control3dzaxis = 0;   // rotation in degrees of z axis
+                    this.control3dxpos = -100;   // center of screen in pixels
                     this.control3dypos = -100;   // center of screen in pixels
                     this.control3dscale = 0.8;   // zoom level, 1 is default 2 is double normal size, 
-                    this.control3dmode3d = false ;  			// is the 3d enabled	
-                     //transform: rotateX(30deg) translate(-100px, -200px) rotateZ(60deg) scale3d(1, 1, 1); min-width: 0px;
+                    this.control3dmode3d = true ;  			// is the 3d enabled	
+                     //    transform: rotateX(10deg) translate(-100px, -100px) rotateZ(0deg) scale3d(0.7, 0.7, 0.7);
     
                     $("game_play_area").style.transform = "rotatex(" + this.control3dxaxis + "deg) translate(" + this.control3dypos + "px," + this.control3dxpos + "px) rotateZ(" + this.control3dzaxis + "deg) scale3d(" + this.control3dscale + "," + this.control3dscale + "," + this.control3dscale + ")";
                 }
@@ -62,24 +62,30 @@ function (dojo, declare) {
         setup: function( gamedatas )
         {
             console.log( "Starting game setup" );
-            
-            // Setting up player boards
+            this.param=new Array();
+			this.cardpowers = [ 1 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 2 , 0 , 3 , 0 , 4 , 0 , 5 , 0 , 0 , 2 , 0 , 3 , 0 , 4 , 0 , 5 , 0 , 0 , 2 , 0 , 3 , 0 , 4 , 0 , 5 , 0 , 0 , 2 , 0 , 3 , 0 , 4 , 0 , 5 , 0 ];
+			// Setting up player boards
             for( var player_id in gamedatas.players )
             {
                 var player = gamedatas.players[player_id];
-                         
-                // TODO: Setting up players boards if needed
+                var player_board_div = $('player_board_'+player_id);
+                dojo.place( this.format_block('jstpl_player_board', player ), player_board_div );
+				dojo.byId("goldcount_p"+player_id).innerHTML=player['gold'];
+				if (parseInt(player_id)== this.player_id) {
+					dojo.byId("guild_p"+player_id).className= "guildtile guild"+gamedatas.player_guild ;
+				    this.addTooltipToClass("guildtile", _('This is your guild color, the tiles of this color that you collect will take away points '),"");
+					} 
+				
             }
-            
-			
+		    level= _("Level");
 			for( var i=1 ; i<=  gamedatas.level; i++ )
             {
-                dojo.place("<div id='table"+i+"'><div id='tableinner"+i+"' class='tableinner'><div class='side1'></div><div class='side2'></div><div class='side3'></div><div class='side4'></div></div></div>", "tables" , "last" ) ;
+                dojo.place("<div id='table"+i+"'><div id='tableinner"+i+"' class='tableinner'><div class='side1'></div><div class='side2'></div><div class='side3'></div><div class='side4'></div><span>"+level+":"+i+"</span></div></div>", "tables" , "last" ) ;
                 for (r=0; r<=4 ; r++)
 				{
 					for (c=0; c<=4 ; c++)
 					{
-						dojo.place("<div id='table"+i+"field"+(r*10+c)+"' class='field'></div>", "tableinner"+i , "last" ) ;
+						dojo.place("<div id='table"+i+"field"+(r*10+c)+"' class='field' style='transform: translate3d("+ (c*122+15)+"px , "+ (r*122+15)+"px, 0px);'></div>", "tableinner"+i , "last" ) ;
 					}	
 				}
 			}
@@ -104,6 +110,12 @@ function (dojo, declare) {
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
 
+			this.addTooltipToClass("guildback", _("Your opponent unknown guild color"), "");
+			
+			this.addTooltipToClass("flamesdiv", _("At the end of each level a number of coins have to be paid as tribute depending on the remaining tiles on the level, 1 coin for 1-5 tiles, 2 coins for 6-8 tiles and 3 coins for more than 9 tiles"), "")
+			
+			
+			
             console.log( "Ending game setup" );
         },
        
@@ -133,13 +145,14 @@ function (dojo, declare) {
            
             case 'playerPick':
               if (this.isCurrentPlayerActive() )
-              {
+              {   
+
                   list = args.args.possibledestinations;
                   this.gameconnections=new Array();
                   for (var i = 0; i < list.length; i++)
                   {
                       var thiselement = list[i];
-                      thistarget=dojo.query("#"+thiselement+">div" ).addClass( 'borderpulse' ) ;
+                      thistarget=dojo.query("#"+thiselement.id ).addClass( 'borderpulse' ) ;
                       this.gameconnections.push( dojo.connect(thistarget[0], 'onclick' , this, 'pickcard'))
                   }
               }
@@ -153,14 +166,48 @@ function (dojo, declare) {
                       for (var i = 0; i < list.length; i++)
                       {
                           var thiselement = list[i];
-                          thistarget=dojo.query("#"+thiselement+">div" ).addClass( 'borderpulse' ) ;
+                          thistarget=dojo.query("#"+thiselement.id ).addClass( 'borderpulse' ) ;
                           this.gameconnections.push( dojo.connect(thistarget[0], 'onclick' , this, 'donatecard'))
                       }
                   }
                 break;
+			case 'playPower':
+              if (this.isCurrentPlayerActive() )
+              {
+                  list = args.args.possibledestinations;
+                  this.gameconnections=new Array();
+                  for (var i = 0; i < list.length; i++)
+                  {
+                      var thiselement = list[i];
+                      thistarget=dojo.query("#"+thiselement.id ).addClass( 'borderpulse' ) ;
+                      this.gameconnections.push( dojo.connect(thistarget[0], 'onclick' , this, 'pickcardPower'))
+                  }
+              }
+            break;
+			case 'activatePower':  
+				
+				if (this.isCurrentPlayerActive() )                             //  1   => clienttranslate("Stairs"       ),
+				{                                                              //  2   => clienttranslate("Secret Path" ),
+				    switch(eval(args.args.cardpower))                          //  3   => clienttranslate("Freedom"      ),
+					{                                                          //  4   => clienttranslate("Prisoners Exchange"),
+						 case 2:
+						  this.gamedatas.gamestate.descriptionmyturn = _('Do you want to activate the power of the Secret Path tile <div class="power2"></div> ') ;
+						  break; 
+						
+						 case 4:
+						  this.gamedatas.gamestate.descriptionmyturn = _('Do you want to activate the power of the Prisoners Exchange tile <div class="power4"></div> ') ;
+						  break; 
+						case 5:
+						  this.gamedatas.gamestate.descriptionmyturn = _('Do you want to activate power of the Remote Trap tile <div class="power5"></div> ') ;
+						  break;
+					}
+					setTimeout(this.updatePageTitle() , 500 )
+				}
             case 'dummmy':
                 break;
             }
+
+			
         },
 
         // onLeavingState: this method is called each time we are leaving a game state.
@@ -172,21 +219,42 @@ function (dojo, declare) {
             
             switch( stateName )
             {
-            
-            /* Example:
-            
-            case 'myGameState':
-            
-                // Hide the HTML block we are displaying only during this game state
-                dojo.style( 'my_html_block_id', 'display', 'none' );
-                
+                case 'playerDonate':
+					if (this.isCurrentPlayerActive() )
+					{
+						dojo.forEach(this.gameconnections, dojo.disconnect);
+						dojo.query(".borderpulse").removeClass("borderpulse");
+						this.gameconnections=new Array();
+					}
                 break;
-           */
-           
-           
+				case 'playerPick':
+					if (this.isCurrentPlayerActive() )
+					{
+						dojo.forEach(this.gameconnections, dojo.disconnect);
+						dojo.query(".borderpulse").removeClass("borderpulse");
+						this.gameconnections=new Array();
+					}
+                break;
+				case 'playPower':
+					if (this.isCurrentPlayerActive() )
+					{
+						dojo.forEach(this.gameconnections, dojo.disconnect);
+						dojo.query(".borderpulse").removeClass("borderpulse");
+						this.gameconnections=new Array();
+					}
+                break;
+          
             case 'dummmy':
                 break;
-            }               
+            }
+			
+				dojo.query(".cardstore").forEach(function(node, index, arr){
+				setTimeout(function() 
+				{
+				   $(node.id+"_counter").innerHTML = node.childElementCount+"&#x21A8;" ;
+				},   2500 )
+			});
+
         }, 
 
         // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
@@ -213,8 +281,9 @@ function (dojo, declare) {
                     break;
 */
                 case 'activatePower':
-                this.addActionButton( 'yes_button', _('Activate Power'), 'activate' );
+                this.addActionButton( 'yes_button', _('Activate Power'), 'playPower' );
                 this.addActionButton( 'no_button', _('Pass'), 'pass' );
+				
                 break;
 
                 }
@@ -230,6 +299,26 @@ function (dojo, declare) {
             script.
         
         */
+		giveGold: function ( source, destination ,amount) 
+		{
+			var animspeed=200;
+			for (var i = 1 ; i<= amount ; i++)
+			{
+				this.slideTemporaryObjectAndIncCounter( '<div class="coin spining"></div>', 'overall-content', source, destination, 1000 , animspeed );
+				animspeed += 200;
+			}
+        },
+		
+		payGold: function ( source, destination ,amount) 
+		{
+			var animspeed=200;
+			for (var i = 1 ; i<= amount ; i++)
+			{
+				dojo.byId(source).innerHTML=eval(dojo.byId(source).innerHTML) - 1;
+				this.MySlideTemporaryObject( '<div class="coin spining"></div>', 'overall-content', source, destination, 1000 , animspeed );
+				animspeed += 200;
+			}
+        },
 		
 		placecard: function ( destination, card_id ,card_type , origin , location_arg )
 		{
@@ -239,9 +328,25 @@ function (dojo, declare) {
 			
 			//dojo.style('stile_back_'+location_arg , "background-position", position);
             innercard="<div id='card_"+card_id+"' class='card' style='background-position:"+position+"; ";
-            innercard+=" transform: translateZ("+5*location_arg+"px)";  
+            //innercard+=" transform: translateZ("+5*location_arg+"px)";  
             innercard+="'></div>";
 			dojo.place( innercard , destination, "last");
+
+			switch (this.cardpowers[eval(card_type)])
+			{
+				case 0:
+				break;
+				case 1: this.addTooltipHtml ( 'card_'+card_id , _(' <div class="stairs"></div> Stairs: the owner of this tile will be the first player on the next level') ) ;
+				break;
+				case 2: this.addTooltipHtml ( 'card_'+card_id , _(' <div class="power2"></div> Secret path: At the end of your turn you have an extra move') );
+				break;
+				case 3: this.addTooltipHtml ( 'card_'+card_id , _(' <div class="power3"></div> Release: At the end of the game if this color stack was not discarded you can use this to release one of you guild color tiles') );
+				break;
+				case 4: this.addTooltipHtml ( 'card_'+card_id , _(' <div class="power4"></div> Prisoners Exchange: You can exchange this tile with one on top of other players stacks') );
+				break;
+				case 5: this.addTooltipHtml ( 'card_'+card_id , _(' <div class="power3"></div> Remote Trap: You can exchange this tile for any other available on the board') );
+				break;
+			}
             
 		},
 		
@@ -264,45 +369,21 @@ function (dojo, declare) {
             var src = dojo.position(mobile);
             dojo.style(mobile, "position", "absolute");
             dojo.place(mobile, new_parent, "last");
-            var tgt = dojo.position(mobile);
-            var box = dojo.marginBox(mobile);
+            return;
+        },
 
-            var left = box.l + src.x - tgt.x;
-            var top = box.t + src.y - tgt.y;
-            dojo.style(mobile, "top", top + "px");
-            dojo.style(mobile, "left", left + "px");
-            return box;
-        },
-        placeOnObjectDirect : function(mobileObj, targetObj, x, y) {
-            var left = dojo.style(mobileObj, "left");
-            var top = dojo.style(mobileObj, "top");
-            // console.log("place " + x + "," + y);
-            dojo.style(mobileObj, {
-                left : x + "px",
-                top : y + "px"
-            });
-        },
-		
 		computeVertexData: function (elem) {
 			var w = elem.offsetWidth / 2,
 				h = elem.offsetHeight / 2,
 				v = {
-					a: { x: -w, y: -h, z: 0 },
-					b: { x: w, y: -h, z: 0 },
-					c: { x: w, y: h, z: 0 },
-					d: { x: -w, y: h, z: 0 }
+					  a: { x: 0, y: 0, z: 0 }
 				},
 				transform;
-			debugger;
 			// Walk up the DOM and apply parent element transforms to each vertex
-			while (elem.nodeType === 1) {
-			
-   			transform = this.getTransform(elem);
-				v.a = this.addVectors(this.rotateVector(v.a, transform.rotate), transform.translate || transform.translate3d);
-				v.b = this.addVectors(this.rotateVector(v.b, transform.rotate), transform.translate || transform.translate3d);
-				v.c = this.addVectors(this.rotateVector(v.c, transform.rotate), transform.translate || transform.translate3d);
-				v.d = this.addVectors(this.rotateVector(v.d, transform.rotate), transform.translate || transform.translate3d);
-				elem = elem.parentNode;
+			while (elem.id != "overall-content" ) {
+				transform = this.getTransform(elem);
+				v.a = this.addVectors( v.a , transform.translate );
+				elem = elem.parentNode;		
 			}
 			return v;
 			
@@ -318,18 +399,9 @@ function (dojo, declare) {
         rotateY = Math.asin(-matrix.m13),
         rotateX, 
         rotateZ;
-
+        position = computedStyle.position;
         rotateX = Math.atan2(matrix.m23, matrix.m33);
         rotateZ = Math.atan2(matrix.m12, matrix.m11);
-
-    /*if (Math.cos(rotateY) !== 0) {
-        rotateX = Math.atan2(matrix.m23, matrix.m33);
-        rotateZ = Math.atan2(matrix.m12, matrix.m11);
-    } else {
-        rotateX = Math.atan2(-matrix.m31, matrix.m22);
-        rotateZ = 0;
-    }*/
-
     return {
         transformStyle: val,
         matrix: matrix,
@@ -342,7 +414,8 @@ function (dojo, declare) {
             x: matrix.m41,
             y: matrix.m42,
             z: matrix.m43
-        }
+        },
+		position: position
     };
 },
 
@@ -466,185 +539,58 @@ addVectors: function (v1, v2) {
          * This method is similar to slideToObject but works on object which do not use inline style positioning. It
          * also attaches object to new parent immediately, so parent is correct during animation
          */
-        slideToObjectRelativeOld : function(token, finalPlace, tlen, tdelay, onEnd) {
-            this.resetPosition(token);
-            dojo.removeClass(token, "traveller");
-            dojo.addClass(token, "traveller");
-            var box = this.attachToNewParentNoDestroy(token, finalPlace);
-            var anim = this.MySlideToObjectPos(token, finalPlace, box.l, box.t, tlen, tdelay);
-            dojo.connect(anim, "onEnd", dojo.hitch(this, function(token) {
-                this.stripPosition(token);
-                if (onEnd) onEnd(token);
-            }));
-            anim.play();
-        },
-        
-        /**
-         * This method is similar to slideToObject but works on object which do not use inline style positioning. It also attaches object to
-         * new parent immediately, so parent is correct during animation
-         */
-        slideToObjectRelative : function(token, finalPlace, duration, delay, onEnd) {
+ 
+		slideToObjectAbsolute : function(token, finalPlace, x, y, duration,delay,onEnd) {
             if (typeof token == 'string') {
                 token = $(token);
             }
-            var self = this;
-            this.delayedExec(function() {
-                self.stripTransition(token);
-                self.stripPosition(token);
-                dojo.addClass(token, "traveller");
-                var box = self.attachToNewParentNoDestroy(token, finalPlace);
-                self.setTransition(token, "all " + duration + "ms ease-in-out");
-                self.placeOnObjectDirect(token, finalPlace, box.l, box.t);
-            }, function() {
-                self.stripTransition(token);
-                self.stripPosition(token);
-                dojo.removeClass(token, "traveller");
-                if (onEnd) onEnd(token);
-            }, duration, delay);
-        },
-		
-		slideToObjectAbsolute : function(token, finalPlace, x, y, duration, delay, onEnd) {
-            if (typeof token == 'string') {
-                token = $(token);
+			if (typeof finalPlace == 'string') {
+                finalPlace = $(finalPlace);
             }
+            
             var self = this;
-            this.delayedExec(function() {
+				
+             this.delayedExec(function() {
                 self.stripTransition(token);
-				dojo.addClass(token, "traveller");
-                var box = self.attachToNewParentNoDestroy(token, finalPlace);
-                self.setTransition(token, "all " + duration + "ms ease-in-out");
-                self.placeOnObjectDirect(token, finalPlace, x, y);
+
+				
+				origin=self.computeVertexData(token);
+				destination=self.computeVertexData(finalPlace);	
+				
+				x += origin.a.x - destination.a.x;
+				y += origin.a.y - destination.a.y;
+				z = origin.a.z - destination.a.z;
+				dojo.style (token , { transform: "translate3D("+ x +"px, "+ y +"px, "+ z +"px)" });
+				self.setTransition(token, "all " + duration + "ms ease-in-out");
+				self.attachToNewParentNoDestroy (token,finalPlace);
+            
             }, function() {
-                self.stripTransition(token);
-				dojo.removeClass(token, "traveller");
-                if (onEnd) onEnd(token);
+                self.stripPosition(token);
+				if (onEnd) {
+                    setTimeout(onEnd, duration);
+                }
             }, duration, delay);
-			self.computeVertexData(token);
+			
         },
 		
-		MySlideToObjectPos: function (token, finalPlace, leftpos, rightpos, tlen, tdelay)
-		{
-			if (token === null)
-			{
-				console.error("slideToObjectPos: mobile obj is null");
-			}
-			if (finalPlace === null)
-			{
-				console.error("slideToObjectPos: target obj is null");
-			}
-			if (leftpos === null)
-			{
-				console.error("slideToObjectPos: target x is null");
-			}
-			if (rightpos === null)
-			{
-				console.error("slideToObjectPos: target y is null");
-			}
-			var tgt = dojo.position(finalPlace);
-			var src = dojo.position(token);
-			if (typeof tlen == "undefined")
-			{
-				tlen = 500;
-			}
-			if (typeof tdelay == "undefined")
-			{
-				tdelay = 0;
-			}
-			if (this.instantaneousMode)
-			{
-				tdelay = Math.min(1, tdelay);
-				tlen = Math.min(1, tlen);
-			}
-			var left = dojo.style(token, "left");
-			var top = dojo.style(token, "top");
-			left = left + tgt.x - src.x + leftpos;
-			top = top + tgt.y - src.y + rightpos;
-			return dojo.fx.slideTo(
-			{
-				node: token,
-				top: top,
-				left: left,
-				delay: tdelay,
-				duration: tlen,
-				unit: "px"
-			}
-			);
+		stripPosition : function(token) {
+			// console.log(token + " STRIPPING");
+			// remove any added positioning style
+			dojo.style(token, "display", null);
+			dojo.style(token, "top", null);
+			dojo.style(token, "left", null);
+			dojo.style(token, "position", null);
+			dojo.style (token , { transform: "" });
 		},
-		
-		MySlideToObject: function (_a37, _a38, _a39, _a3a)
-		{
-			if (_a37 === null)
-			{
-				console.error("slideToObject: mobile obj is null");
-			}
-			if (_a38 === null)
-			{
-				console.error("slideToObject: target obj is null");
-			}
-			var tgt = dojo.position(_a38);
-			var src = dojo.position(_a37);
-			if (typeof _a39 == "undefined")
-			{
-				_a39 = 500;
-			}
-			if (typeof _a3a == "undefined")
-			{
-				_a3a = 0;
-			}
-			if (this.instantaneousMode)
-			{
-				_a3a = Math.min(1, _a3a);
-				_a39 = Math.min(1, _a39);
-			}
-			var left = dojo.style(_a37, "left");
-			var top = dojo.style(_a37, "top");
-			left = left + tgt.x - src.x + (tgt.w - src.w) / 2;
-			top = top + tgt.y - src.y + (tgt.h - src.h) / 2;
-			return dojo.fx.slideTo(
-			{
-				node: _a37,
-				top: top,
-				left: left,
-				delay: _a3a,
-				duration: _a39,
-				unit: "px"
-			}
-			);
+		stripTransition : function(token) {
+			this.setTransition(token, "");
 		},
-		MySlideTemporaryObject: function (_a47, _a48, from, to, _a49, _a4a)
-					{
-						var obj = dojo.place(_a47, _a48);
-						dojo.style(obj, "position", "absolute");
-						dojo.style(obj, "left", "0px");
-						dojo.style(obj, "top", "0px");
-						this.placeOnObject(obj, from);
-						var anim = this.MySlideToObject(obj, to, _a49, _a4a);
-						var onEnd = function (node)
-						{
-							dojo.destroy(node);
-						};
-						dojo.connect(anim, "onEnd", onEnd);
-						anim.play();
-						return anim;
-					},
-		
-					stripPosition : function(token) {
-					    // console.log(token + " STRIPPING");
-					    // remove any added positioning style
-					    dojo.style(token, "display", null);
-					    dojo.style(token, "top", null);
-					    dojo.style(token, "left", null);
-					    dojo.style(token, "position", null);
-					},
-					stripTransition : function(token) {
-					    this.setTransition(token, "");
-					},
-					setTransition : function(token, value) {
-					    dojo.style(token, "transition", value);
-					    dojo.style(token, "-webkit-transition", value);
-					    dojo.style(token, "-moz-transition", value);
-					    dojo.style(token, "-o-transition", value);
-					},
+		setTransition : function(token, value) {
+			dojo.style(token, "transition", value);
+			dojo.style(token, "-webkit-transition", value);
+			dojo.style(token, "-moz-transition", value);
+			dojo.style(token, "-o-transition", value);
+		},
 		resetPosition : function(token) {
             // console.log(token + " RESETING");
             // remove any added positioning style
@@ -652,7 +598,85 @@ addVectors: function (v1, v2) {
             dojo.style(token, "top", "0px");
             dojo.style(token, "left", "0px");
             dojo.style(token, "position", null);
+			dojo.style(token, "transform", null);
         },
+		
+		
+		slideTemporaryObjectAndIncCounter: function( obj_html , obj_parent, from, to, duration, delay ) 
+		{
+			var obj = dojo.place(obj_html, obj_parent);
+			dojo.style(obj, "position", "absolute");
+			dojo.style(obj, "left", "0px");
+			dojo.style(obj, "top", "0px");
+			this.placeOnObject(obj, from);
+			this.param.push(to);
+			var anim = this.MySlideToObject(obj, to, duration, delay);
+			onendF = dojo.hitch( this ,function(){ this.incAndDestroy(obj)});
+			dojo.connect(anim, "onEnd", onendF);
+			anim.play();
+			return anim;			
+		},
+		
+		incAndDestroy : function(node) 
+		{				
+				dojo.destroy(node);
+				target=this.param.shift();
+				dojo.byId(target).innerHTML=eval(dojo.byId(target).innerHTML) + 1;
+		},
+		
+		MySlideToObject: function (mobile_obj, destination_obj, duration, delay)
+		{
+			if (mobile_obj === null)
+			{
+				console.error("slideToObject: mobile obj is null");
+			}
+			if (destination_obj === null)
+			{
+				console.error("slideToObject: target obj is null");
+			}
+			var tgt = dojo.position(destination_obj);
+			var src = dojo.position(mobile_obj);
+			if (typeof duration == "undefined")
+			{
+				duration = 500;
+			}
+			if (typeof delay == "undefined")
+			{
+				delay = 0;
+			}
+			if (this.instantaneousMode)
+			{
+				delay = Math.min(1, delay);
+				duration = Math.min(1, duration);
+			}
+			var left = dojo.style(mobile_obj, "left");
+			var top = dojo.style(mobile_obj, "top");
+			left = left + tgt.x - src.x + (tgt.w - src.w) / 2;
+			top = top + tgt.y - src.y + (tgt.h - src.h) / 2;
+			return dojo.fx.slideTo(
+			{
+				node: mobile_obj,
+				top: top,
+				left: left,
+				delay: delay,
+				duration: duration,
+				unit: "px"
+			}
+			);
+		},
+		MySlideTemporaryObject: function (obj_html, obj_parent, from, to, duration, delay)
+		{
+			var obj = dojo.place(obj_html, obj_parent);
+			dojo.style(obj, "position", "absolute");
+			dojo.style(obj, "left", "0px");
+			dojo.style(obj, "top", "0px");
+			this.placeOnObject(obj, from);
+			var anim = this.MySlideToObject(obj, to, duration, delay);
+			onendF = dojo.hitch( this ,function(){ dojo.destroy(obj)});
+			dojo.connect(anim, "onEnd", onendF);
+			anim.play();
+			return anim;
+		},
 		////////////////////////////////////////////////
 
 
@@ -716,12 +740,7 @@ addVectors: function (v1, v2) {
 
             // Get the cliqued pos and Player field ID
             var cardpicked = evt.currentTarget.id;
-			var card_id = cardpicked.split('_')[1];
-			
-		/*	this.confirmationDialog( _('Are you sure you want to make this?'), dojo.hitch( this, function() {
-            this.ajaxcall( '/mygame/mygame/makeThis.html', { lock:true }, this, function( result ) {} );
-			} ) ); */
-		
+			var card_id = cardpicked.split('_')[1];	
 			dojo.forEach(this.gameconnections, dojo.disconnect);
 			
 			this.gameconnections=new Array();
@@ -729,6 +748,30 @@ addVectors: function (v1, v2) {
             if( this.checkAction( 'pickCard' ) )    // Check that this action is possible at this moment
             {            
                 this.ajaxcall( "/dragonkeeper/dragonkeeper/pickcard.html", {
+                    card_id:card_id                    
+                }, this, function( result ) {} );
+            }        			
+        },
+		
+		pickcardPower: function( evt )
+        {
+            // Stop this event propagation
+			
+            dojo.stopEvent( evt );
+			if( ! this.checkAction( 'pickcardPower' ) )
+            {   return; }
+			
+			dojo.query(".borderpulse").removeClass("borderpulse");
+
+            // Get the cliqued pos and Player field ID
+            var cardpicked = evt.currentTarget.id;
+			var card_id = cardpicked.split('_')[1];
+			dojo.forEach(this.gameconnections, dojo.disconnect);			
+			this.gameconnections=new Array();
+		
+            if( this.checkAction( 'pickcardPower' ) )    // Check that this action is possible at this moment
+            {            
+                this.ajaxcall( "/dragonkeeper/dragonkeeper/pickcardPower.html", {
                     card_id:card_id                    
                 }, this, function( result ) {} );
             }            
@@ -764,15 +807,15 @@ addVectors: function (v1, v2) {
             }            
         },
         
-        activate: function( evt )
+        playPower: function( evt )
         {
 			dojo.stopEvent( evt );
 			if( ! this.checkAction( 'playPower' ) )
             {  return; }
 			
-			if( this.checkAction( 'playPower' ) && (this.gamedatas.players[this.getActivePlayerId()]['gold']>=5 )  )    // Check that this action is possible at this moment
+			if( this.checkAction( 'playPower' ) )    // Check that this action is possible at this moment
             {            
-                this.ajaxcall( "/dragonkeeper/dragonkeeper/activate.html", {
+                this.ajaxcall( "/dragonkeeper/dragonkeeper/playPower.html", {
                 }, this, function( result ) {} );
             }
 			else
@@ -787,7 +830,7 @@ addVectors: function (v1, v2) {
 			if( ! this.checkAction( 'pass' ) )
             {  return; }
 			
-			if( this.checkAction( 'pass' ) && (this.gamedatas.players[this.getActivePlayerId()]['gold']>=5 )  )    // Check that this action is possible at this moment
+			if( this.checkAction( 'pass' ) )    // Check that this action is possible at this moment
             {            
                 this.ajaxcall( "/dragonkeeper/dragonkeeper/pass.html", {
                 }, this, function( result ) {} );
@@ -827,9 +870,19 @@ addVectors: function (v1, v2) {
             // 
 
             dojo.subscribe('movedrake', this, "notif_movedrake");
-            this.notifqueue.setSynchronous('movedrake', 1500);
+            this.notifqueue.setSynchronous('movedrake', 2000);
             dojo.subscribe('movecard', this, "notif_movecard");
-            this.notifqueue.setSynchronous('movecard', 1500);
+            this.notifqueue.setSynchronous('movecard', 2000);
+			dojo.subscribe('playergetgold', this, "notif_playergetgold");
+            this.notifqueue.setSynchronous('playergetgold', 2000);
+			dojo.subscribe('playerpaysgold', this, "notif_playerpaysgold");
+            this.notifqueue.setSynchronous('playerpaysgold', 2000);
+			dojo.subscribe('discard', this, "notif_discard");
+            this.notifqueue.setSynchronous('discard', 2000);
+			dojo.subscribe('levelchange', this, "notif_levelchange");
+            this.notifqueue.setSynchronous('levelchange', 8000);
+			dojo.subscribe('notif_finalScore', this, "notif_finalScore");
+            this.notifqueue.setSynchronous('notif_finalScore', 8000);
             
         },  
         
@@ -853,14 +906,62 @@ addVectors: function (v1, v2) {
             // console.log('notif_tokenMoved');
             // console.log(notif);
             var drakepos = notif.args.drakepos;
-        this.slideToObjectAbsolute('drake', drakepos, 0, 0, 500);
+			
+		setTimeout(function() 
+			{
+			dojo.style ($("drakefoot") ,{ transform: "translate3D(10px, 10px, 10px) rotateZ("+ Math.floor((Math.random() * 180) + 1) +"deg)" });
+			} , 1);
+        this.slideToObjectAbsolute('drake', drakepos, 0, 0, 1000 , 0 );
         },
         notif_movecard : function(notif) {
-            // console.log('notif_tokenMoved');
-            // console.log(notif);
             var destination = notif.args.destination;
-        this.slideToObjectAbsolute('card_'+notif.args.card_id, destination,0,0, 1500);
+        this.slideToObjectAbsolute('card_'+notif.args.card_id, 'sky' ,0,0, 1000, 1 , dojo.hitch( this ,function(){ this.slideToObjectAbsolute('card_'+notif.args.card_id, destination,0,0, 1000 )}));
         },
-
+		notif_playergetgold: function( notif )
+        {
+            console.log( 'notif_playergetgold' );
+            console.log( notif );
+            this.gamedatas.players[notif.args.player_id]['gold']+=notif.args.amount;
+			this.giveGold ( "sky" , "goldcount_p"+notif.args.player_id, notif.args.amount );
+        },
+		notif_playerpaysgold: function( notif )
+        {
+            console.log( 'notif_playerpaysgold' );
+            console.log( notif );
+            this.gamedatas.players[notif.args.player_id]['gold']+=notif.args.amount;
+			this.payGold ( "goldcount_p"+notif.args.player_id , "flames_"+notif.args.player_id , notif.args.amount );
+        },
+		notif_discard : function(notif) {
+            var destination = notif.args.destination;
+        this.slideToObjectAbsolute('card_'+notif.args.card_id, 'nowhere' ,0,0, 1000, 1 , dojo.hitch( this ,function(){ dojo.destroy('card_'+notif.args.card_id) }));
+        },
+		notif_levelchange : function(notif) {
+            console.log('notif_levelchange');
+			console.log( notif );
+            //debugger;
+            var drakepos = notif.args.drakepos;
+			var level = notif.args.level ;
+			this.gamedatas.level=level;
+        this.slideToObjectAbsolute('drake', drakepos, 0, 0, 1000 , 0 );
+		this.slideToObjectAbsolute('table'+level, 'nowhere' ,0,0, 2000, 1 , dojo.hitch( this ,function(){ dojo.destroy('table'+level) }));
+        },
+		notif_finalScore: function (notif) 
+		{
+            console.log('**** Notification : finalScore');
+            console.log(notif);
+			id     = _(notif.args.id);
+			title  = _(notif.args.title);
+			header = _(notif.args.header);
+			footer = _(notif.args.footer);
+			closing= _(notif.args.closing);
+			
+			for (i in this.gamedatas.players )
+				{
+					this.scoreCtrl[ i ].setValue( notif.args.players[i].score );
+				}
+			
+            this.displayTableWindow( id, title, notif.args.table, header, footer, closing);
+        }
+		
    });             
 });

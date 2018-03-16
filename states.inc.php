@@ -71,7 +71,7 @@ $machinestates = array(
             "args" => "argPossiblePicks",
 			"action" => "stCheckpick",
     		"possibleactions" => array( "pickCard" ),
-    		"transitions" => array( "pickCard" => 3, "nextLevel" =>7 )
+    		"transitions" => array( "pickCard" => 3, "nextLevel" =>7 , "activatePower" => 4 )
     ),
 
     3 => array(
@@ -92,7 +92,7 @@ $machinestates = array(
         "type" => "activeplayer",
         "args" => "argPowertype",
 		"possibleactions" => array( "playPower" , "pass" ),
-        "transitions" => array( "playPower" => 5 , "pass"=> 6 )
+        "transitions" => array( "playPower" => 5 , "pass"=> 6 , "playerDonate" => 3 )
     ),
 
     5 => array(
@@ -103,7 +103,7 @@ $machinestates = array(
 		"args" => "argPossibleTargets",
 		"action" => "stCheckpower",
         "possibleactions" => array( "pickcardPower" ),
-        "transitions" => array( "pickCard" => 6 , "nextLevel" =>7 )
+        "transitions" => array( "pickCard" => 6 , "nextLevel" =>7 , "playerDonate" => 3)
     ),
 
     6 => array(

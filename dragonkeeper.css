@@ -43,6 +43,10 @@
 
 /********* You can start writing your CSS below this line: **********/
 
+.mode_3d.enableTransitions #game_play_area {
+    /* transition: transform 0.4s linear; */
+}
+
 #game_play_area_wrap {
     pointer-events: none
 }
@@ -60,76 +64,180 @@
     display:  inline-block;
 }
 
-.1_header {
-    width: 40px;
-    height: 40px;
+.header0 {
+    width: 50px;
+    height: 50px;
     margin: 1px;
-    margin-left: 25px;
     background-image: url(img/tiles.jpg);
-    background-size: initial;
-    background-position: -213px -25px;
-    font-size: 14px;
-    color: red;
-    font-weight:  bold;
+    background-size: 350px 300px;
+    background-position: -50px 0px;
+    display:  inline-block;
+    transform: rotateX(60deg) rotateZ(45deg);
+    transform-style:preserve-3d
 }
-
-.2_header {
-    width: 40px;
-    height: 40px;
+.header0::after {
+    content: "";
+    width: 50px;
+    height: 50px;
     margin: 1px;
-    margin-left: 25px;
     background-image: url(img/tiles.jpg);
-    background-size: initial;
-    background-position: -311px -121px;
-    font-size: 14px;
-    color: #99adce;
-    font-weight:  bold;
-    display: inline-block;
+    background-size: 350px 300px;
+    background-position: -50px 0px;
+    position:absolute;
+    transform: translate3d(0px,0px,-5px);
 }
-
-.3_header {
-    width: 40px;
-    height: 40px;
+.header0::before {
+    content: "";
+    width: 50px;
+    height: 50px;
     margin: 1px;
-    margin-left: 25px;
     background-image: url(img/tiles.jpg);
-    background-size: initial;
-    background-position: -311px -220px;
-    font-size: 14px;
-    color: #f9a11a;
-    font-weight: bold;
-    display: inline-block;
-}
-
-.4_header {
-    width: 40px;
-    height: 40px;
-    margin: 1px;
-    margin-left: 25px;
-    background-image: url(img/tiles.jpg);
-    background-size: initial;
-    background-position: -311px -320px;
-    font-size: 14px;
-    color: greenyellow;
-    font-weight: bold;
-    display: inline-block;
-}
-
-.5_header {
-    width: 40px;
-    height: 40px;
-    margin: 1px;
-    margin-left: 25px;
-    background-image: url(img/tiles.jpg);
-    background-size: initial;
-    background-position: -312px -522px;
-    font-size: 14px;
-    color: violet;
-    font-weight: bold;
-    display: inline-block;
+    background-size: 350px 300px;
+    background-position: -50px 0px;
+    position:absolute;
+    transform: translate3d(0px,0px,-10px);
+    box-shadow: 4px 1px 3px 4px rgba(0, 0, 0, 0.37);
 }
 
 
+.header1 {
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    background-image: url(img/tiles.jpg);
+    background-size: 350px 300px;
+    background-position: -50px -50px ;
+    display:  inline-block;
+    transform: rotateX(60deg) rotateZ(45deg);
+    transform-style:preserve-3d
+}
+.header1::after {
+    content: "";
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    background-image: url(img/tiles.jpg);
+    background-size: 350px 300px;
+    background-position: -50px -50px ;
+    position:absolute;
+    transform: translate3d(0px,0px,-5px);
+}
+.header1::before {
+    content: "";
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    background-image: url(img/tiles.jpg);
+    background-size: 350px 300px;
+    background-position: -50px -50px ;
+    position:absolute;
+    transform: translate3d(0px,0px,-10px);
+    box-shadow: 4px 1px 3px 4px rgba(0, 0, 0, 0.37);
+}
+
+
+.header2 {
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    background-image: url(img/tiles.jpg);
+    background-size: 350px 300px;
+    background-position: -0px -150px ;
+    display:  inline-block;
+    transform: rotateX(60deg) rotateZ(45deg);
+    transform-style:preserve-3d
+}
+.header2::after {
+    content: "";
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    background-image: url(img/tiles.jpg);
+    background-size: 350px 300px;
+    background-position: -0px -150px ;
+    position:absolute;
+    transform: translate3d(0px,0px,-5px);
+}
+.header2::before {
+    content: "";
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    background-image: url(img/tiles.jpg);
+    background-size: 350px 300px;
+    background-position: -0px -150px;
+    position:absolute;
+    transform: translate3d(0px,0px,-10px);
+    box-shadow: 4px 1px 3px 4px rgba(0, 0, 0, 0.37);
+}
+.header3 {
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    background-image: url(img/tiles.jpg);
+    background-size: 350px 300px;
+    background-position: 200px -200px ;
+    display:  inline-block;
+    transform: rotateX(60deg) rotateZ(45deg);
+    transform-style:preserve-3d
+}
+.header3::after {
+    content: "";
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    background-image: url(img/tiles.jpg);
+    background-size: 350px 300px;
+    background-position: 200px -200px ;
+    position:absolute;
+    transform: translate3d(0px,0px,-5px);
+}
+.header3::before {
+    content: "";
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    background-image: url(img/tiles.jpg);
+    background-size: 350px 300px;
+    background-position: 200px -200px ;
+    position:absolute;
+    transform: translate3d(0px,0px,-10px);
+    box-shadow: 4px 1px 3px 4px rgba(0, 0, 0, 0.37);
+}
+.header4 {
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    background-image: url(img/tiles.jpg);
+    background-size: 350px 300px;
+    background-position: -100px 50px;
+    display:  inline-block;
+    transform: rotateX(60deg) rotateZ(45deg);
+    transform-style:preserve-3d;
+}
+.header4::after {
+    content: "";
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    background-image: url(img/tiles.jpg);
+    background-size: 350px 300px;
+    background-position: -100px 50px;
+    position:absolute;
+    transform: translate3d(0px,0px,-5px);
+}
+.header4::before {
+    content: "";
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    background-image: url(img/tiles.jpg);
+    background-size: 350px 300px;
+    background-position: -100px 50px;
+    position:absolute;
+    transform: translate3d(0px,0px,-10px);
+    box-shadow: 4px 1px 3px 4px rgba(0, 0, 0, 0.37);
+}
 .goldlog {
     width: 20px;
     height: 20px;
@@ -253,8 +361,9 @@
 }
 
 #playArea {
+    margin: 15px;
     height: 1300px;
-    width: 100%;
+    width: 97%;
     display: block;
     /* background-repeat: no-repeat; */
     background-image: url('img/background.jpg');
@@ -262,14 +371,14 @@
     box-shadow: 6px 6px 2px 0px rgba(0, 0, 0, 0.65);
 }
 
-@media screen and (max-width: 1913px) and (min-width: 1025px) {
+@media screen and (max-width: 1900px) and (min-width: 1025px) {
     #playareascaler {
         transform:scale3d(0.7,0.7,0.7);
         transform-origin: top left
     }
 
     #playArea {
-        width: 150%
+        width: 1500px
     }
 }
 
@@ -280,7 +389,7 @@
     }
 
     #playArea {
-        width: 1470px
+        width: 1500px
     }
 }
 
@@ -302,6 +411,38 @@
         position: absolute;
         transform: translate3d(420px,20px,0px);
 }
+
+#helpower {
+        height: 600px;
+        width: 300px;
+        position: absolute;
+        background-size: 100% 100%;
+        background-image: url('img/playerboard.jpg');
+        background-repeat:  no-repeat;
+        border-radius: 10px;
+        box-shadow: 6px 6px 2px 0px rgba(0, 0, 0, 0.65);
+        transform: translate3d(40px,60px,10px);
+}
+
+#helpowerinner {
+        height: 550px;
+        width: 260px;
+        position: absolute;
+        background-size: 100% 100%;
+        background: #666669;
+        background-repeat:  no-repeat;
+        border-radius: 10px;
+        box-shadow: 6px 6px 2px 0px rgba(0, 0, 0, 0.65);
+        transform: translate3d(20px,33px,10px);
+        font-family: "Roboto", Arial, sans-serif;
+    font-size: 17px;
+    font-weight: normal;
+    display: inline-block;
+    color: #f0f2f1;
+    text-shadow: 1px 0 1px #000, 0 -1px 1px #000, 0 1px 1px #000, -1px 0 1px #000;
+    padding:5px
+}
+
 
 #sky {
         height: 100px;
@@ -343,6 +484,78 @@
     width:100%;
     height:100%;
     position: absolute;
+}
+
+.tableinner span{
+    left: 14px;
+    top: 1.5px;
+    position: absolute;
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    display: inline-block;
+    color: #f0f2f1;
+    /* text-shadow: 1px 0 1px #fff, 0 -1px 1px #fff, 0 1px 1px #fff, -1px 0 1px #fff; */
+}
+
+.counter0{
+    left: 400px;
+    top: 156px;
+    position: absolute;
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 19px;
+    font-weight: bold;
+    display: inline-block;
+    color: #f0f2f1;
+    text-shadow: 1px 0 1px #000, 0 -1px 1px #000, 0 1px 1px #000, -1px 0 1px #000;
+}
+
+.counter1{
+    left: 140px;
+    top: 156px;
+    position: absolute;
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 19px;
+    font-weight: bold;
+    display: inline-block;
+    color: #f0f2f1;
+    text-shadow: 1px 0 1px #000, 0 -1px 1px #000, 0 1px 1px #000, -1px 0 1px #000;
+}
+
+.counter2{
+  left: 530px;
+    top: 156px;
+   position: absolute;
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 19px;
+    font-weight: bold;
+    display: inline-block;
+    color: #f0f2f1;
+    text-shadow: 1px 0 1px #000, 0 -1px 1px #000, 0 1px 1px #000, -1px 0 1px #000;
+}
+
+.counter3{
+  left: 271px;
+  top: 156px;
+  position: absolute;
+  position: absolute;
+  font-family: "Roboto", Arial, sans-serif;
+  font-size: 19px;
+  font-weight: bold;
+  display: inline-block;
+  color: #f0f2f1;
+  text-shadow: 1px 0 1px #000, 0 -1px 1px #000, 0 1px 1px #000, -1px 0 1px #000;
+}
+.counter4{
+  left: 660px;
+    top: 156px;
+    position: absolute;
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 19px;
+    font-weight: bold;
+    display: inline-block;
+    color: #f0f2f1;
+    text-shadow: 1px 0 1px #000, 0 -1px 1px #000, 0 1px 1px #000, -1px 0 1px #000;
 }
 
 .side1{
@@ -580,6 +793,16 @@
     transform-style: preserve-3d
 }
 
+.stairs {
+    width: 50px;
+    height: 50px;
+    background-image: url('img/tiles.jpg');
+    background-size: 700% 600%;
+    box-shadow: 4px 4px 2px 0px rgba(0, 0, 0, 0.22);
+    display:inline-block;
+    border-radius: 4px;
+}
+
 .card {
     width: 100px;
     height: 100px;
@@ -662,7 +885,7 @@
     -moz-animation: borderpulse 2s ease infinite !important;
     -o-animation: borderpulse 2s ease infinite !important;
     animation: borderpulse 2s ease infinite !important;
-    z-index: 200 !important
+    /*z-index: 200 !important*/
 }
 
 @keyframes borderpulse {
@@ -771,7 +994,7 @@
 }
 
 .boardHeader{
-    background-color: #f6f5e3;
+    background-color: #beb7b1;
     width: fit-content;
     border-radius: 3px;
     margin-left: 15px;
@@ -871,56 +1094,56 @@
  transform: translate3D(0px, 0px, 150px) ;
 }
 .activeplayer .cardstore:hover div:nth-child(1) {
- transform: translate3D(-140px, 120px, 20px) rotateY(15deg)   ;
+ transform: translate3D(-100px, 120px, 20px) rotateY(15deg)   ;
 }
 .activeplayer .cardstore:hover div:nth-child(2) {
- transform: translate3D(-100px, 120px, 20px) rotateY(15deg);
+ transform: translate3D(-60px, 120px, 20px) rotateY(15deg);
 }
 .activeplayer .cardstore:hover div:nth-child(3) {
- transform: translate3D(-60px, 120px, 20px) rotateY(15deg)   ;
-}
-.activeplayer .cardstore:hover div:nth-child(4) {
  transform: translate3D(-20px, 120px, 20px) rotateY(15deg)   ;
 }
-.activeplayer .cardstore:hover div:nth-child(5) {
+.activeplayer .cardstore:hover div:nth-child(4) {
  transform: translate3D(20px, 120px, 20px) rotateY(15deg)   ;
 }
-.activeplayer .cardstore:hover div:nth-child(6) {
+.activeplayer .cardstore:hover div:nth-child(5) {
  transform: translate3D(60px, 120px, 20px) rotateY(15deg)   ;
 }
-.activeplayer .cardstore:hover div:nth-child(7) {
+.activeplayer .cardstore:hover div:nth-child(6) {
  transform: translate3D(100px, 120px, 20px) rotateY(15deg)   ;
 }
-.activeplayer .cardstore:hover div:nth-child(8) {
+.activeplayer .cardstore:hover div:nth-child(7) {
  transform: translate3D(140px, 120px, 20px) rotateY(15deg)   ;
 }
-.activeplayer .cardstore:hover div:nth-child(9) {
+.activeplayer .cardstore:hover div:nth-child(8) {
  transform: translate3D(180px, 120px, 20px) rotateY(15deg)   ;
 }
-.activeplayer .cardstore:hover div:nth-child(10) {
+.activeplayer .cardstore:hover div:nth-child(9) {
  transform: translate3D(220px, 120px, 20px) rotateY(15deg)   ;
 }
-.activeplayer .cardstore:hover div:nth-child(11) {
- transform: translate3D(260px,120px, 20px) rotateY(15deg)   ;
+.activeplayer .cardstore:hover div:nth-child(10) {
+ transform: translate3D(260px, 120px, 20px) rotateY(15deg)   ;
 }
-.activeplayer .cardstore:hover div:nth-child(12) {
+.activeplayer .cardstore:hover div:nth-child(11) {
  transform: translate3D(300px,120px, 20px) rotateY(15deg)   ;
 }
-.activeplayer .cardstore:hover div:nth-child(13) {
+.activeplayer .cardstore:hover div:nth-child(12) {
  transform: translate3D(340px,120px, 20px) rotateY(15deg)   ;
 }
-.activeplayer .cardstore:hover div:nth-child(14) {
+.activeplayer .cardstore:hover div:nth-child(13) {
  transform: translate3D(380px,120px, 20px) rotateY(15deg)   ;
 }
-.activeplayer .cardstore:hover div:nth-child(15) {
+.activeplayer .cardstore:hover div:nth-child(14) {
  transform: translate3D(420px,120px, 20px) rotateY(15deg)   ;
+}
+.activeplayer .cardstore:hover div:nth-child(15) {
+ transform: translate3D(460px,120px, 20px) rotateY(15deg)   ;
 }
 
 .goldcounter {
     font-family: "Roboto", Arial, sans-serif;
     font-size: 18px;
     font-weight:  bold;
-    display: inline-block;
+    /* display: inline-block; */
     text-shadow: 1px 0 1px #fff, 0 -1px 1px #fff, 0 1px 1px #fff, -1px 0 1px #fff;
 }
 

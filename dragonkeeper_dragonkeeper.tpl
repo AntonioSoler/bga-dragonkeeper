@@ -29,15 +29,32 @@
   <div id="playArea">
 	<div id="nowhere"></div>
 	<div id="tables"></div>
+	<div id="helpower">
+		<div id="helpowerinner">
+			 <b>{LABEL_POWER_TITLE}</b>
+			 <hr>
+			 <div class="stairs"></div>{LABEL_HELP_POWER1} <br> 
+			 <div class="power2"></div>{LABEL_HELP_POWER2} <br> 
+			 <div class="power3"></div>{LABEL_HELP_POWER3} <br> 
+			 <div class="power4"></div>{LABEL_HELP_POWER4} <br> 
+			 <div class="power5"></div>{LABEL_HELP_POWER5} <br> 
+		     
+		</div>	 
+	</div>
     <div id="sky"></div>
 <!-- BEGIN playerboard -->                
 				<div id="playerboard_{PLAYER_ID}" class="playerboard player{PLAYER_COUNT} {ACTIVEPLAYER}">
 				<h2 class="boardHeader" style="color:#{PLAYER_COLOR};"  >{PLAYER_NAME}</h2>
                     <div id="store_{PLAYER_ID}_0" class="store0 cardstore"></div>
-                    <div id="store_{PLAYER_ID}_1" class="store1 cardstore"></div>
+					<div id="store_{PLAYER_ID}_1" class="store1 cardstore"></div>
                     <div id="store_{PLAYER_ID}_2" class="store2 cardstore"></div>
                     <div id="store_{PLAYER_ID}_3" class="store3 cardstore"></div>
                     <div id="store_{PLAYER_ID}_4" class="store4 cardstore"></div>
+					<div id="store_{PLAYER_ID}_0_counter" class="counter0"></div>
+					<div id="store_{PLAYER_ID}_1_counter" class="counter1"></div>
+					<div id="store_{PLAYER_ID}_2_counter" class="counter2"></div>
+					<div id="store_{PLAYER_ID}_3_counter" class="counter3"></div>
+					<div id="store_{PLAYER_ID}_4_counter" class="counter4"></div>
 					<div id="flames_{PLAYER_ID}"  class="flamesdiv"></div>
                 </div>
 <!-- END playerboard -->
