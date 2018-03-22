@@ -64,6 +64,12 @@ function (dojo, declare) {
         {   
 			// dojo.connect ($("game_play_area"), 'onclick' , this, 'dragElement' )
 			this.dragElement3d ($("pagesection_gameview"));
+			if (dojo.isFF) {
+                    dojo.connect($("game_play_area"), 'DOMMouseScroll', this, 'onMouseWheel');
+                } else {
+                    dojo.connect($("game_play_area"), 'mousewheel', this, 'onMouseWheel');
+                }
+				
             console.log( "Starting game setup" );
             this.param=new Array();
 			this.cardpowers = [ 1 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 2 , 0 , 3 , 0 , 4 , 0 , 5 , 0 , 0 , 2 , 0 , 3 , 0 , 4 , 0 , 5 , 0 , 0 , 2 , 0 , 3 , 0 , 4 , 0 , 5 , 0 , 0 , 2 , 0 , 3 , 0 , 4 , 0 , 5 , 0 ];
@@ -255,69 +261,61 @@ function (dojo, declare) {
             case 'dummmy':
                 break;
             }
-			
-				
-
+		
         }, 
+		
+		onMouseWheel: function(evt) {
+                //dojo.stopEvent(evt);
+                dojo.stopEvent(evt);
+                var d = Math.max(-1, Math.min(1, (evt.wheelDelta || -evt.detail))) * 0.1;
+                if (!this.control3dmode3d) {
+                    // 2D mode zoom in/out
+                    this.setZoom(this.zoom + d);
+                } else {
+                    // 3D mode adjust camera
+                    this.change3d(0, 0, 0, 0, d, true, false);
+                }
+            },
+
 
 		dragElement3d: function(elmnt) {
-		  this.pos1 = 0;
-		  this.pos2 = 0;
-		  this.pos3 = 0;
-		  this.pos4 = 0;
-		  
-		  dojo.connect(elmnt, "onmousedown", this, "dragMouseDown");
-		  dojo.connect(elmnt, "onmouseup", this, "closeDragElement");
-		  elmnt.oncontextmenu = function () { return false; }
-		  //elmnt.style.transition = "transform 0.05s ease";
-         
-          this.drag3d=elmnt;
+                dojo.connect(elmnt, "onmousedown", this, "drag3dMouseDown");
+                dojo.connect(elmnt, "onmouseup", this, "closeDragElement3d");
+                elmnt.oncontextmenu = function() {
+                    return false;
+                }
+                //elmnt.style.transition = "transform 0.05s ease";
+                this.drag3d = elmnt;
+        },
+
+		drag3dMouseDown: function(e) {
+                e = e || window.event;
+                if (e.which == 3) {
+                    dojo.stopEvent(e);
+                    //this.dragging_3dhandler = dojo.connect($("ebd-body"), "mousemove", this, "elementDrag3d");
+					$("ebd-body").onmousemove= dojo.hitch( this , this.elementDrag3d); 
+                }
+            },
+
+		elementDrag3d: function(e) {
+                e = e || window.event;
+                this.change3d(e.movementY / (-10), 0, 0, e.movementX / (-10), 0, true, false);
+        },
+
+		closeDragElement3d: function(evt) {
+                /* stop moving when mouse button is released:*/
+                console.log("mouseup button 3");
+                if (evt.which == 3) {
+                    /*if(evt.preventDefault != undefined)
+                    		evt.preventDefault();
+                    if(evt.stopPropagation != undefined)
+                    	evt.stopPropagation();*/
+                    dojo.stopEvent(evt);
+					$("ebd-body").onmousemove=null;
+                    //dojo.disconnect(this.dragging_3dhandler);
+                }
+            },
 			
-		},
-
-		dragMouseDown:  function(e) {
-			e = e || window.event;
-			// get the mouse cursor position at startup:
-			this.pos3 = e.clientX;
-			this.pos4 = e.clientY;
-			if (e.which == 3){
-				dojo.stopEvent( e );
-				/*document.body.requestPointerLock = document.body.requestPointerLock || document.body.mozRequestPointerLock;
-				document.body.requestPointerLock() */
-				this.dragging_3dhandler = dojo.connect(this.drag3d, "mousemove", this, "elementDrag");
-			}
-		},
-
-		elementDrag: function(e) {
-			e = e || window.event;
-			// calculate the new cursor position:
-			this.pos1 = this.pos3 - e.clientX;
-			this.pos2 = this.pos4 - e.clientY;
-			this.pos3 = e.clientX;
-			this.pos4 = e.clientY;
-			// set the element's new position:
-			
-			/*elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-			elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";*/
-			//this.change3d( this.pos2 / 3  , 0, 0, this.pos1 / 3 , 0, true, false);
-			this.change3d( e.movementY/ (-10)   , 0, 0, e.movementX / (-10) , 0, true, false);
-		  },
-
-		closeDragElement:  function(evt) {
-			/* stop moving when mouse button is released:*/
-			console.log ("mouseup");
-			if(evt.preventDefault != undefined)
-					evt.preventDefault();
-			if(evt.stopPropagation != undefined)
-				evt.stopPropagation();
-			dojo.stopEvent( evt );
-			dojo.disconnect(this.dragging_3dhandler);
-			/* document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock;
-
-			// Attempt to unlock
-			document.exitPointerLock(); */
-			
-		},
         // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
         //                        action status bar (ie: the HTML links in the status bar).
         //        
