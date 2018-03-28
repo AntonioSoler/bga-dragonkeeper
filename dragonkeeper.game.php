@@ -927,7 +927,10 @@ class dragonkeeper extends Table
 							) ) ;
 				
 				self::DbQuery( "UPDATE cards set card_location = 'discard' WHERE card_location like 'store_".$player_id."_".$min_value_stack."'");
-				 // 10 19 28 37   Free
+				 
+															// 10 19 28 37   RELEASE CARDS TYPES
+															
+				// Release my own guild cards if beneficial											
 				$Release_cards=self::getUniqueValueFromDB('SELECT count(*) FROM cards WHERE  ( card_location like "store_'.$player_id.'%") AND (card_type in ( 10 ,19 , 28, 37)) ');
 				
 				for ($j=0 ; $j < $Release_cards ; $j++ )
@@ -938,8 +941,26 @@ class dragonkeeper extends Table
 						array(			
 							'player_name' =>  $thisplayername 	
 							) ) ;
-						self::DbQuery( "UPDATE cards set card_location = 'discard' WHERE ( card_location like 'store_".$player_id."_".$player_guild."' ) AND (card_type_arg > 3 ) ORDER by card_type_arg DESC LIMIT 1");
 						self::DbQuery( "UPDATE cards set card_location = 'discard' WHERE ( card_location like 'store_".$player_id."%') AND (card_type in ( 10 ,19 , 28, 37)) LIMIT 1");
+						self::DbQuery( "UPDATE cards set card_location = 'discard' WHERE ( card_location like 'store_".$player_id."_".$player_guild."' ) AND (card_type_arg > 3 ) ORDER by card_type_arg DESC LIMIT 1");
+						
+					}
+				}
+				
+				// Release other cards using my own guild color relase
+				$Release_cards=self::getUniqueValueFromDB('SELECT count(*) FROM cards WHERE  ( card_location like "store_'.$player_id.'_'.$player_guild.'") AND (card_type in ( 10 ,19 , 28, 37)) ');
+				
+				for ($j=0 ; $j < $Release_cards ; $j++ )
+				{
+					if ( self::getUniqueValueFromDB('SELECT count(*) FROM cards WHERE ( card_location like "store_'.$player_id.'%") AND (card_type_arg < 2 )') > 1 )
+					{
+						self::notifyAllPlayers( "message" , clienttranslate( '${player_name} uses a Release power tile <div class="power3"></div> of theirs own guild to release a low value card of other color' ), 
+						array(			
+							'player_name' =>  $thisplayername 	
+							) ) ;
+						self::DbQuery( "UPDATE cards set card_location = 'discard' WHERE ( card_location like 'store_".$player_id."_".$player_guild."') AND (card_type in ( 10 ,19 , 28, 37)) LIMIT 1");
+						self::DbQuery( "UPDATE cards set card_location = 'discard' WHERE ( card_location like 'store_".$player_id."%' ) AND (card_type_arg < 2 ) ORDER by card_type_arg ASC LIMIT 1");
+						
 					}
 				}
 				

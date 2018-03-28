@@ -54,6 +54,12 @@
     display: inline-flex
 }
 
+.grabbinghand{
+	cursor: grabbing !important;
+    cursor: -webkit-grabbing !important;
+	cursor: moz-grabbing !important;
+}
+
 .coin {
     width: 40px;
     height: 40px;
@@ -781,7 +787,7 @@
 }
 
 .field:hover .card:nth-child(1) {
- transform: translate3D(0px, 0px, 105px) scale3d(1.5,1.5,1.5) ;
+ transform: translate3D(0px, 0px, 25px) scale3d(1.5,1.5,1.5) ;
 }
 
 .field div:nth-child(2) {

@@ -292,8 +292,8 @@ function (dojo, declare) {
                 e = e || window.event;
                 if (e.which == 3) {
                     dojo.stopEvent(e);
-                    //this.dragging_3dhandler = dojo.connect($("ebd-body"), "mousemove", this, "elementDrag3d");
-					$("ebd-body").onmousemove= dojo.hitch( this , this.elementDrag3d); 
+                    $("ebd-body").onmousemove = dojo.hitch(this, this.elementDrag3d);
+					dojo.addClass( $("pagesection_gameview") , "grabbinghand");
                 }
             },
 
@@ -304,17 +304,12 @@ function (dojo, declare) {
 
 		closeDragElement3d: function(evt) {
                 /* stop moving when mouse button is released:*/
-                console.log("mouseup button 3");
                 if (evt.which == 3) {
-                    /*if(evt.preventDefault != undefined)
-                    		evt.preventDefault();
-                    if(evt.stopPropagation != undefined)
-                    	evt.stopPropagation();*/
                     dojo.stopEvent(evt);
-					$("ebd-body").onmousemove=null;
-                    //dojo.disconnect(this.dragging_3dhandler);
+                    $("ebd-body").onmousemove = null;
+					dojo.removeClass( $("pagesection_gameview") , "grabbinghand");
                 }
-            },
+        },
 			
         // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
         //                        action status bar (ie: the HTML links in the status bar).
@@ -1020,6 +1015,7 @@ addVectors: function (v1, v2) {
 				}
 			
             this.displayTableWindow( id, title, notif.args.table, header, footer, closing);
+			dojo.query(".playerboard").addClass("activeplayer");
         }
 		
    });             
