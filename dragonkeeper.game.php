@@ -431,7 +431,12 @@ class dragonkeeper extends Table
     {
 		self::checkAction( 'donateCard' );
         $player_id = self::getActivePlayerId();
-        $nextplayer_id=self::getPlayerBefore( $player_id );
+        
+		$nextplayer_id = $player_id;
+		do {
+			$nextplayer_id=self::getPlayerBefore( $nextplayer_id );
+		}while ( (self::getUniqueValueFromDb( "SELECT player_eliminated from player WHERE  player_id=". $nextplayer_id  ) == 1 )	 );
+		
 		$thiscard= $this->cards->getCard( $card_id );
         $thiscardtype=$thiscard['type'];
         $thiscardcolor= $this->getCardcolor( $thiscardtype );
@@ -712,12 +717,24 @@ class dragonkeeper extends Table
 					$this->activeNextPlayer();
 					}
 				
-				//self::eliminatePlayer( $thisid );
-				self::DbQuery( "UPDATE player set player_eliminated = 1 WHERE Player_id = $thisid" );
+				 if ( sizeof($this->getActivePlayers()) > 1 ) {
+					 
+					 self::eliminatePlayer( $thisid ); 
+				 }
+				 else 
+				 {
+				     self::DbQuery( "UPDATE player set player_eliminated = 1 WHERE Player_id = $thisid" );
+				 }
 				
 				self::notifyAllPlayers( "message", clienttranslate( '${player_name} <b>is now eliminated from the game as this player cannot pay the tribute!</b>' ), array(
 						'player_name' => $thisPlayerName
 					) );
+				 if ( sizeof($this->getActivePlayers()) == 1 ) {
+					 
+					 $this->gamestate->nextState( "endGameScoring" );
+					 
+				 }
+      					 
 			}	
 		}
 		
@@ -931,7 +948,8 @@ class dragonkeeper extends Table
 															// 10 19 28 37   RELEASE CARDS TYPES
 															
 				// Release my own guild cards if beneficial											
-				$Release_cards=self::getUniqueValueFromDB('SELECT count(*) FROM cards WHERE  ( card_location like "store_'.$player_id.'%") AND (card_type in ( 10 ,19 , 28, 37)) ');
+				
+				$Release_cards=self::getUniqueValueFromDB('SELECT count(*) FROM cards WHERE  ( card_location like "store_'.$player_id.'_'.$player_guild.'") AND (card_type in ( 10 ,19 , 28, 37)) ');
 				
 				for ($j=0 ; $j < $Release_cards ; $j++ )
 				{
@@ -948,7 +966,7 @@ class dragonkeeper extends Table
 				}
 				
 				// Release other cards using my own guild color relase
-				$Release_cards=self::getUniqueValueFromDB('SELECT count(*) FROM cards WHERE  ( card_location like "store_'.$player_id.'_'.$player_guild.'") AND (card_type in ( 10 ,19 , 28, 37)) ');
+				$Release_cards=self::getUniqueValueFromDB('SELECT count(*) FROM cards WHERE  ( card_location like "store_'.$player_id.'%") AND (card_type in ( 10 ,19 , 28, 37)) ');
 				
 				for ($j=0 ; $j < $Release_cards ; $j++ )
 				{
@@ -1042,29 +1060,15 @@ class dragonkeeper extends Table
         (ex: pass).
     */
 
-    function zombieTurn( $state, $active_player )
+    public function zombieTurn($state, $active_player)
     {
-    	$statename = $state['name'];
-    	
-        if ($state['type'] === "activeplayer") {
-            switch ($statename) {
-                default:
-                    $this->gamestate->nextState( "zombiePass" );
-                	break;
-            }
-
-            return;
+        if (array_key_exists('zombiePass', $state['transitions'])) {
+            $this->gamestate->nextState('zombiePass');
+        } else {
+            throw new BgaVisibleSystemException('Zombie player ' . $active_player . ' stuck in unexpected state ' . $state['name']);
         }
-
-        if ($state['type'] === "multipleactiveplayer") {
-            // Make sure player is in a non blocking status for role turn
-            $this->gamestate->setPlayerNonMultiactive( $active_player, '' );
-            
-            return;
-        }
-
-        throw new feException( "Zombie mode not supported at this game state: ".$statename );
     }
+	
     
 ///////////////////////////////////////////////////////////////////////////////////:
 ////////// DB upgrade

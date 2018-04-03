@@ -270,7 +270,7 @@ function (dojo, declare) {
                 var d = Math.max(-1, Math.min(1, (evt.wheelDelta || -evt.detail))) * 0.1;
                 if (!this.control3dmode3d) {
                     // 2D mode zoom in/out
-                    this.setZoom(this.zoom + d);
+                    //this.setZoom(this.zoom + d);
                 } else {
                     // 3D mode adjust camera
                     this.change3d(0, 0, 0, 0, d, true, false);
