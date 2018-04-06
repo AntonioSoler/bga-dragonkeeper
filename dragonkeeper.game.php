@@ -729,11 +729,6 @@ class dragonkeeper extends Table
 				self::notifyAllPlayers( "message", clienttranslate( '${player_name} <b>is now eliminated from the game as this player cannot pay the tribute!</b>' ), array(
 						'player_name' => $thisPlayerName
 					) );
-				 if ( sizeof($this->getActivePlayers()) == 1 ) {
-					 
-					 $this->gamestate->nextState( "endGameScoring" );
-					 
-				 }
       					 
 			}	
 		}
@@ -884,10 +879,11 @@ class dragonkeeper extends Table
 			{   
 				$cards_picked[$player_guild]=0;   // Remove the player guild cards
 				
-				self::notifyAllPlayers( "message" , clienttranslate( '${player_name} discards the highest stack <div class="header${color}"></div> and it matches this players guild : <div class="guildtile guild${color}"></div> ' ), 
+				self::notifyAllPlayers( "discardstack" , clienttranslate( '${player_name} discards the highest stack <div class="header${color}"></div> and it matches this players guild : <div class="guildtile guild${color}"></div> ' ), 
 						array(			
 							'player_name' =>  $thisplayername,
-							'color' =>  $player_guild
+							'color' =>  $player_guild,
+							'store_id' => 'store_'.$player_id.'_'.$player_guild
 							) ) ;
 				
 				$cards_values[$player_guild]=9999 ;
@@ -911,10 +907,11 @@ class dragonkeeper extends Table
 				}
 				$cards_values[$player_guild]=0 ;
 				$cards_values[$min_value_stack]=0 ;
-				self::notifyAllPlayers( "message" , clienttranslate( '${player_name} discards also a second stack: <div class="header${color}"></div>' ), 
+				self::notifyAllPlayers( "discardstack" , clienttranslate( '${player_name} discards also a second stack: <div class="header${color}"></div>' ), 
 						array(			
 							'player_name' =>  $thisplayername,
-							'color' =>  $min_value_stack
+							'color' =>  $min_value_stack,
+							'store_id' => 'store_'.$player_id.'_'.$min_value_stack
 							) ) ;
 				
 				self::setStat( $cards_values[0], 'red_score'   , $player['player_id'] );
@@ -937,10 +934,11 @@ class dragonkeeper extends Table
 				   }
 				}
 				
-				self::notifyAllPlayers( "message" , clienttranslate( '${player_name} discards the highest stack: <div class="header${color}"></div>' ), 
+				self::notifyAllPlayers( "discardstack" , clienttranslate( '${player_name} discards the highest stack: <div class="header${color}"></div>' ), 
 						array(			
 							'player_name' =>  $thisplayername,
-							'color' =>  $min_value_stack
+							'color' =>  $min_value_stack,
+							'store_id' => 'store_'.$player_id.'_'.$min_value_stack
 							) ) ;
 				
 				self::DbQuery( "UPDATE cards set card_location = 'discard' WHERE card_location like 'store_".$player_id."_".$min_value_stack."'");
@@ -948,36 +946,56 @@ class dragonkeeper extends Table
 															// 10 19 28 37   RELEASE CARDS TYPES
 															
 				// Release my own guild cards if beneficial											
-				
-				$Release_cards=self::getUniqueValueFromDB('SELECT count(*) FROM cards WHERE  ( card_location like "store_'.$player_id.'_'.$player_guild.'") AND (card_type in ( 10 ,19 , 28, 37)) ');
+				$Release_cards=self::getUniqueValueFromDB('SELECT count(*) FROM cards WHERE ( card_location like "store_'.$player_id.'_%") AND (card_type in ( 10 ,19 , 28, 37))');
 				
 				for ($j=0 ; $j < $Release_cards ; $j++ )
 				{
-					if ( self::getUniqueValueFromDB('SELECT count(*) FROM cards WHERE ( card_location like "store_'.$player_id.'_'.$player_guild.'") AND (card_type_arg > 3 )') > 1 )
+					if ( self::getUniqueValueFromDB('SELECT count(*) FROM cards WHERE ( card_location like "store_'.$player_id.'_'.$player_guild.'") AND (card_type_arg > 2 )') >= 1 )
 					{
-						self::notifyAllPlayers( "message" , clienttranslate( '${player_name} uses a Release power tile <div class="power3"></div> the highest valued tile from this player guild does not score negatively' ), 
-						array(			
-							'player_name' =>  $thisplayername 	
-							) ) ;
-						self::DbQuery( "UPDATE cards set card_location = 'discard' WHERE ( card_location like 'store_".$player_id."%') AND (card_type in ( 10 ,19 , 28, 37)) LIMIT 1");
-						self::DbQuery( "UPDATE cards set card_location = 'discard' WHERE ( card_location like 'store_".$player_id."_".$player_guild."' ) AND (card_type_arg > 3 ) ORDER by card_type_arg DESC LIMIT 1");
+						
+						$oldcard = self::getUniqueValueFromDB('SELECT card_id FROM cards WHERE ( card_location like "store_'.$player_id.'_'.$player_guild.'") AND (card_type_arg > 2 ) ORDER by card_type_arg DESC , card_id LIMIT 1 ') ;	
+						self::notifyAllPlayers( "discard", clienttranslate( '${player_name} uses a Release power tile <div class="power3"></div> the highest valued tile from this player guild does not score negatively' ), array(
+						'player_id' => $player_id,
+						'player_name' => $thisplayername,
+						'card_id' => $oldcard
+						) );
+						
+						$oldcard = self::getUniqueValueFromDB('SELECT card_id FROM cards WHERE ( card_location like "store_'.$player_id.'_%") AND (card_type in ( 10 ,19 , 28, 37)) ORDER by card_id LIMIT 1 ' ) ;	
+						self::notifyAllPlayers( "discard", clienttranslate( '${player_name} discards a Release power tile <div class="power3"></div> ' ), array(
+						'player_id' => $player_id,
+						'player_name' => $thisplayername,
+						'card_id' => $oldcard
+						) );
+						
+						self::DbQuery( "UPDATE cards set card_location = 'discard' WHERE ( card_location like 'store_".$player_id."_%') AND (card_type in ( 10 ,19 , 28, 37)) ORDER by card_id LIMIT 1");
+						self::DbQuery( "UPDATE cards set card_location = 'discard' WHERE ( card_location like 'store_".$player_id."_".$player_guild."' ) AND (card_type_arg > 2 ) ORDER by card_type_arg DESC , card_id LIMIT 1");
 						
 					}
 				}
 				
 				// Release other cards using my own guild color relase
-				$Release_cards=self::getUniqueValueFromDB('SELECT count(*) FROM cards WHERE  ( card_location like "store_'.$player_id.'%") AND (card_type in ( 10 ,19 , 28, 37)) ');
+				$Release_cards=self::getUniqueValueFromDB('SELECT count(*) FROM cards WHERE  ( card_location like "store_'.$player_id.'_'.$player_guild.'") AND (card_type in ( 10 ,19 , 28, 37)) ');
 				
 				for ($j=0 ; $j < $Release_cards ; $j++ )
 				{
-					if ( self::getUniqueValueFromDB('SELECT count(*) FROM cards WHERE ( card_location like "store_'.$player_id.'%") AND (card_type_arg < 2 )') > 1 )
+					if ( self::getUniqueValueFromDB('SELECT count(*) FROM cards WHERE ( card_location like "store_'.$player_id.'%") AND (card_type_arg < 2 )') >= 1 )
 					{
-						self::notifyAllPlayers( "message" , clienttranslate( '${player_name} uses a Release power tile <div class="power3"></div> of theirs own guild to release a low value card of other color' ), 
-						array(			
-							'player_name' =>  $thisplayername 	
-							) ) ;
-						self::DbQuery( "UPDATE cards set card_location = 'discard' WHERE ( card_location like 'store_".$player_id."_".$player_guild."') AND (card_type in ( 10 ,19 , 28, 37)) LIMIT 1");
-						self::DbQuery( "UPDATE cards set card_location = 'discard' WHERE ( card_location like 'store_".$player_id."%' ) AND (card_type_arg < 2 ) ORDER by card_type_arg ASC LIMIT 1");
+						$oldcard = self::getUniqueValueFromDB('SELECT card_id FROM cards WHERE ( card_location like "store_'.$player_id.'_%" ) AND (card_type_arg < 2 ) ORDER by card_type_arg ASC , card_id LIMIT 1') ;	
+						self::notifyAllPlayers( "discard", clienttranslate( '${player_name} uses a Release power tile <div class="power3"></div> of theirs own guild to release a low value card of other color' ), array(
+						'player_id' => $player_id,
+						'player_name' => $thisplayername,
+						'card_id' => $oldcard
+						) );
+						
+						$oldcard = self::getUniqueValueFromDB('SELECT card_id FROM cards WHERE ( card_location like "store_'.$player_id.'_'.$player_guild.'") AND (card_type in ( 10 ,19 , 28, 37)) ORDER by card_id LIMIT 1' ) ;	
+						self::notifyAllPlayers( "discard", clienttranslate( '${player_name} discards a Release power tile <div class="power3"></div> ' ), array(
+						'player_id' => $player_id,
+						'player_name' => $thisplayername,
+						'card_id' => $oldcard
+						) );	
+							
+						self::DbQuery( "UPDATE cards set card_location = 'discard' WHERE ( card_location like 'store_".$player_id."_".$player_guild."') AND (card_type in ( 10 ,19 , 28, 37)) ORDER by card_id LIMIT 1");
+						self::DbQuery( "UPDATE cards set card_location = 'discard' WHERE ( card_location like 'store_".$player_id."%' ) AND (card_type_arg < 2 ) ORDER by card_type_arg ASC , card_id LIMIT 1");
 						
 					}
 				}

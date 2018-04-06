@@ -47,17 +47,17 @@
     /* transition: transform 0.4s linear; */
 }
 
-#game_play_area_wrap {
-    pointer-events: none
-}
-.cp_board {
-    display: inline-flex
+.mode_3d #game_play_area_wrap {
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+    transform-origin: center center;
+    pointer-events: none;
+    overflow: hidden;
+    height: 100vh
 }
 
-.grabbinghand{
-	cursor: grabbing !important;
-    cursor: -webkit-grabbing !important;
-	cursor: moz-grabbing !important;
+.cp_board {
+    display: inline-flex
 }
 
 .coin {
@@ -684,7 +684,6 @@
     /* display: none; */
 }
 
-
 #table2 div .side1::after {
     content: "";
     width: 101%;
@@ -787,7 +786,7 @@
 }
 
 .field:hover .card:nth-child(1) {
- transform: translate3D(0px, 0px, 25px) scale3d(1.5,1.5,1.5) ;
+ transform: translate3D(0px, 0px, 105px) scale3d(1.5,1.5,1.5) ;
 }
 
 .field div:nth-child(2) {
@@ -830,6 +829,7 @@
     border-radius: 2px;
     transform: translatez(-4px);
     position:absolute;
+	z-index:-1
 }
 
 #drake {

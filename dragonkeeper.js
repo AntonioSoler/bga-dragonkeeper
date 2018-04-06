@@ -408,7 +408,7 @@ function (dojo, declare) {
 				break;
 				case 4: this.addTooltipHtml ( 'card_'+card_id , _(' <div class="power4"></div> Prisoners Exchange: You can exchange this tile with one on top of other players stacks') );
 				break;
-				case 5: this.addTooltipHtml ( 'card_'+card_id , _(' <div class="power3"></div> Remote Trap: You can exchange this tile for any other available on the board') );
+				case 5: this.addTooltipHtml ( 'card_'+card_id , _(' <div class="power5"></div> Remote Trap: You can exchange this tile for any other available on the board') );
 				break;
 			}
             
@@ -943,6 +943,8 @@ addVectors: function (v1, v2) {
             this.notifqueue.setSynchronous('playerpaysgold', 2000);
 			dojo.subscribe('discard', this, "notif_discard");
             this.notifqueue.setSynchronous('discard', 2000);
+			dojo.subscribe('discardstack', this, "notif_discardstack");
+            this.notifqueue.setSynchronous('discardstack', 2000);
 			dojo.subscribe('levelchange', this, "notif_levelchange");
             this.notifqueue.setSynchronous('levelchange', 8000);
 			dojo.subscribe('notif_finalScore', this, "notif_finalScore");
@@ -999,6 +1001,11 @@ addVectors: function (v1, v2) {
             var destination = notif.args.destination;
         this.slideToObjectAbsolute('card_'+notif.args.card_id, 'nowhere' ,0,0, 1000, 1 , dojo.hitch( this ,function(){ dojo.destroy('card_'+notif.args.card_id) }));
         },
+		notif_discardstack : function(notif) {
+            var destination = notif.args.destination;
+        this.slideToObjectAbsolute(notif.args.store_id, 'nowhere' ,0,0, 1000, 1 , dojo.hitch( this ,function(){ dojo.destroy('card_'+notif.args.store_id) }));
+        },
+		
 		notif_levelchange : function(notif) {
             console.log('notif_levelchange');
 			console.log( notif );
@@ -1025,7 +1032,15 @@ addVectors: function (v1, v2) {
 				}
 			
             this.displayTableWindow( id, title, notif.args.table, header, footer, closing);
+			
 			dojo.query(".playerboard").addClass("activeplayer");
+			dojo.query(".dijitDialogUnderlayWrapper").destroy ;
+			dojo.query(".cardstore").forEach(function(node, index, arr){
+				setTimeout(function() 
+				{
+				   $(node.id+"_counter").innerHTML = node.childElementCount+"&#x21A8;" ;
+				},   3500 )
+			    });
         }
 		
    });             
