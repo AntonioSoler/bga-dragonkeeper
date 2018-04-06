@@ -1,6 +1,6 @@
 bga-dragonkeeper
 
-🎲 Taluva implementation for Board Game Arena
+🎲 dragonkeeper implementation for Board Game Arena
 
 Languages: PHP JS SQL CSS
 
